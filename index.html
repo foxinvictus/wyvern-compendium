@@ -1,0 +1,1106 @@
+<title>Wyvern Compendium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700;800&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a field ledger at night. Sticky filter bar, then four tabbed folios: Monster, Rankings, Titles, Matrix. Monster colours carry the spectacle; the chrome stays ink and brass. */
+:root{
+  --ink:#0e1517; --ink-2:#152024; --ink-3:#1d2b30; --line:#2a3b41;
+  --bone:#ece4d2; --bone-2:#b9b19f; --bone-3:#7f8a86;
+  --brass:#d6ac5e; --brass-2:#f0cc84;
+  --g1:#b9784a; --g2:#a8a24a; --g3:#4f9a8a; --g4:#5a7fc8; --g5:#9a68c0; --g6:#d0606e;
+  --f-display:"Alegreya SC","Palatino Linotype",Palatino,Georgia,serif;
+  --f-body:"Alegreya Sans","Segoe UI",system-ui,sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--bone);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  background-image:radial-gradient(1200px 500px at 85% -10%,rgba(214,172,94,.10),transparent 60%),radial-gradient(900px 600px at -10% 20%,rgba(79,154,138,.08),transparent 60%);}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;text-wrap:balance;margin:0;letter-spacing:.01em}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brass-2);outline-offset:2px}
+.mono{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+.label{font-family:var(--f-data);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--bone-3)}
+
+/* hero */
+.hero{display:grid;gap:18px;padding-block:8px 22px}
+.hero h1{font-size:clamp(40px,7vw,78px);line-height:.95;font-weight:800;color:var(--bone)}
+.hero h1 span{color:var(--brass)}
+.hero p{max-width:62ch;color:var(--bone-2);margin:0;font-size:17px}
+.facts{display:flex;flex-wrap:wrap;gap:10px 28px}
+.fact b{display:block;font-family:var(--f-display);font-size:30px;line-height:1;color:var(--brass-2)}
+.ribbon{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:3px;margin-top:6px}
+.ribbon div{height:34px;border-radius:3px;position:relative;cursor:pointer;opacity:.9;transition:transform .2s,opacity .2s}
+.ribbon div:hover{transform:translateY(-3px);opacity:1}
+.ribbon div i{position:absolute;inset:auto 0 0 0;background:rgba(0,0,0,.35);border-radius:0 0 3px 3px}
+.ribbon-legend{display:flex;justify-content:space-between;gap:8px}
+
+/* filter bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(14,21,23,.92);backdrop-filter:blur(8px);
+  border-block:1px solid var(--line);padding-block:10px;margin-inline:-20px;padding-inline:20px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chips .cgl{margin-left:10px}
+.chip{border:1px solid var(--line);background:var(--ink-2);border-radius:99px;padding:4px 11px;font-size:13px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;color:var(--bone-3)}
+.chip[aria-pressed="true"]{border-color:var(--brass);color:var(--bone);background:var(--ink-3)}
+.chip.trait.only{border-color:var(--brass);color:var(--brass-2);background:var(--ink-3)}
+.chip.trait.only .dot{background:var(--brass)}
+.chip.trait.hide{border-color:#8a4048;color:#e0a0a6;text-decoration:line-through;text-decoration-color:rgba(224,160,166,.5)}
+.chip.trait.hide .dot{background:#e0606a}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--bone-3)}
+.chip[aria-pressed="true"] .dot{background:var(--brass)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{background:var(--ink-2);border:0;padding:4px 10px;font-size:13px;cursor:pointer;color:var(--bone-3)}
+.seg button[aria-pressed="true"]{background:var(--brass);color:var(--ink);font-weight:700}
+.count{margin-left:auto;font-size:13px;color:var(--bone-2)}
+
+/* tabs */
+.tabs{display:flex;gap:4px;margin-block:22px 18px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;font-family:var(--f-display);font-size:20px;color:var(--bone-3);cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--bone);border-color:var(--brass)}
+.panel{animation:rise .35s ease both}
+@keyframes rise{from{transform:translateY(6px);opacity:.4}to{transform:none;opacity:1}}
+
+/* generic */
+.mname{font-weight:700;cursor:pointer}
+.mname:hover{text-decoration:underline;text-underline-offset:3px}
+.cat{font-family:var(--f-data);font-size:10px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);border-radius:3px;padding:1px 5px;color:var(--bone-2);white-space:nowrap}
+.muted{color:var(--bone-3)}
+.btn{background:var(--ink-3);border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer;font-size:14px}
+.btn:hover{border-color:var(--brass)}
+
+/* bestiary */
+.best{display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px}
+.list{border:1px solid var(--line);border-radius:8px;background:var(--ink-2);display:flex;flex-direction:column;max-height:720px;min-width:0}
+.list .search{padding:10px;border-bottom:1px solid var(--line);display:grid;gap:8px}
+.list input{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.list ul{list-style:none;margin:0;padding:4px 0;overflow-y:auto}
+.list li{padding:5px 12px;display:flex;justify-content:space-between;gap:8px;cursor:pointer;font-size:15px}
+.list li:hover,.list li.on{background:var(--ink-3)}
+.list li small{font-family:var(--f-data);font-size:11px;color:var(--bone-3)}
+.list li.sub{padding-left:24px;font-size:14px}
+.profile{min-width:0;display:grid;gap:22px;align-content:start}
+.ph{display:grid;gap:6px;padding-bottom:16px;border-bottom:1px solid var(--line);position:relative}
+.ph h2{font-size:clamp(34px,5vw,56px);line-height:1}
+.ph .glow{position:absolute;inset:-30px -10px auto auto;width:260px;height:160px;filter:blur(60px);opacity:.25;pointer-events:none;border-radius:50%}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{border-left:2px solid var(--line);padding:2px 0 2px 12px}
+.stat b{display:block;font-family:var(--f-display);font-size:26px;line-height:1.1}
+.stat span{font-size:13px;color:var(--bone-2)}
+.tl{overflow-x:auto}
+.tlg{display:grid;grid-template-columns:repeat(var(--n),minmax(46px,1fr));gap:4px;min-width:calc(var(--n)*50px)}
+.gen{font-family:var(--f-data);font-size:11px;padding:3px 6px;border-radius:3px;color:var(--ink);font-weight:500}
+.cell{height:64px;border-radius:4px;background:var(--ink-2);border:1px dashed var(--line);position:relative;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px}
+.cell.on{border:0;box-shadow:inset 0 -14px 24px rgba(0,0,0,.35)}
+.cell.debut::after{content:"★";position:absolute;top:3px;left:5px;font-size:13px;color:var(--ink)}
+.cell .ab{font-family:var(--f-data);font-size:10px;color:var(--bone-3)}
+.cell.on .ab{color:rgba(0,0,0,.7);font-weight:500}
+.fam{display:flex;flex-wrap:wrap;gap:8px}
+.famcard{border:1px solid var(--line);border-radius:6px;padding:6px 10px;display:flex;gap:8px;align-items:center;cursor:pointer;background:var(--ink-2)}
+.famcard:hover{border-color:var(--brass)}
+.sw{width:12px;height:12px;border-radius:3px;flex:none;box-shadow:0 0 0 1px rgba(255,255,255,.15)}
+.note{color:var(--bone-2);max-width:68ch;margin:0}
+
+/* rankings */
+.boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px}
+.board{border:1px solid var(--line);border-radius:8px;background:var(--ink-2);padding:16px;display:grid;gap:10px;align-content:start;min-width:0}
+.board h3{font-size:22px}
+.board p{margin:0;font-size:14px;color:var(--bone-2)}
+.rows{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:5px 8px;align-items:center;font-size:14px}
+.row{display:contents}
+.row .rk{font-family:var(--f-data);font-size:11px;color:var(--bone-3);text-align:right}
+.bartrack{position:relative;height:22px;display:flex;align-items:center;min-width:0}
+.barfill{position:absolute;left:0;top:0;bottom:0;border-radius:3px;opacity:.28;transform-origin:left;animation:grow .7s cubic-bezier(.2,.8,.2,1) both}
+.bartrack .mname{position:relative;padding-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .val{font-family:var(--f-data);font-size:12px;color:var(--bone-2);white-space:nowrap}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.cloud{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:15px}
+.more{justify-self:start;background:none;border:0;color:var(--brass);cursor:pointer;padding:0;font-size:13px}
+
+/* titles */
+.tchart{display:grid;gap:6px}
+.trow{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr) 120px;gap:10px;align-items:center;cursor:pointer;padding:3px 6px;border-radius:4px}
+.trow:hover,.trow.on{background:var(--ink-2)}
+.trow .tt{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .tt small{font-family:var(--f-data);color:var(--bone-3);font-size:11px;margin-right:6px}
+.stack{display:flex;height:18px;border-radius:3px;overflow:hidden;background:var(--ink-2)}
+.stack span{height:100%;animation:grow .6s ease both;transform-origin:left}
+.trow .tv{font-family:var(--f-data);font-size:12px;color:var(--bone-2);text-align:right}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--bone-2);align-items:center}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.roster{border:1px solid var(--line);border-radius:8px;padding:16px;background:var(--ink-2);display:grid;gap:12px;margin-top:18px}
+.roster h3{font-size:26px}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:4px 14px}
+.rgrid div{display:flex;gap:6px;align-items:center;font-size:14px;min-width:0}
+.rgrid .mname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{font-family:var(--f-data);font-size:9px;letter-spacing:.08em;padding:1px 4px;border-radius:2px;background:var(--brass);color:var(--ink);font-weight:500}
+.badge.n{background:var(--g3)}
+
+/* matrix */
+
+/* titles tab */
+.ttgens{display:grid;gap:14px}
+.ttgen{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;align-items:stretch}
+.ttgen-h{border-left:4px solid;padding:6px 0 6px 10px;display:flex;flex-direction:column;justify-content:center}
+.ttgen-h b{font-family:var(--f-display);font-size:20px;line-height:1}
+.ttgen-h span{font-family:var(--f-data);font-size:11px;color:var(--bone-3)}
+.tttiles{display:flex;flex-wrap:wrap;gap:8px}
+.tttile{min-width:104px;background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;display:grid;gap:2px;text-align:left;position:relative;overflow:hidden;transition:transform .15s,border-color .15s}
+.tttile:hover{transform:translateY(-2px);border-color:var(--brass)}
+.tttile[aria-pressed="true"]{border-color:var(--brass-2);background:var(--ink-3);box-shadow:0 0 0 1px var(--brass-2) inset}
+.tttile::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--gc)}
+.tttile b{font-family:var(--f-display);font-size:22px;line-height:1.1}
+.tttile small{font-family:var(--f-data);font-size:11px;color:var(--bone-2)}
+.tttile .gstar{position:absolute;top:8px;right:8px;margin:0}
+.ttsel{margin-top:22px;display:grid;gap:14px}
+.ttsel-h{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:12px}
+.ttsel-h h2{font-size:clamp(26px,4vw,38px)}
+.ttstats{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--bone-2)}
+.ttstats b{font-family:var(--f-display);font-size:20px;color:var(--bone);margin-right:4px}
+.ttctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.mtiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.mtile{border-radius:8px;padding:11px 12px 10px 14px;display:grid;gap:7px;cursor:pointer;position:relative;border:1px solid var(--line);background:var(--ink-2);min-width:0}
+.mtile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:8px 0 0 8px;background:var(--mc)}
+.mtile:hover{border-color:var(--bone-3)}
+.mtile.debut{background:linear-gradient(135deg,rgba(214,172,94,.16),var(--ink-2) 60%);border-color:rgba(214,172,94,.55)}
+.mtile.ret{background:linear-gradient(135deg,rgba(79,154,138,.13),var(--ink-2) 60%)}
+.mtile .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.mtile .top .mname{font-size:16px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
+.st{font-family:var(--f-data);font-size:9px;letter-spacing:.1em;padding:2px 5px;border-radius:3px;white-space:nowrap;font-weight:500}
+.st.debut{background:var(--brass);color:var(--ink)}
+.st.ret{background:var(--g3);color:var(--ink)}
+.mtile .gap{font-size:13px;color:var(--bone-2)}
+.mtile .gap b{font-family:var(--f-display);font-size:19px;color:var(--bone);margin-right:3px}
+.strip{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:2px}
+.strip i{height:8px;border-radius:1px;background:var(--ink-3)}
+.strip i.cur{outline:1.5px solid var(--bone);outline-offset:1px}
+.prev{font-family:var(--f-data);font-size:10.5px;color:var(--bone-3);line-height:1.5}
+.mtile .tags{display:flex;flex-wrap:wrap;gap:4px}
+@media (max-width:760px){.ttgen{grid-template-columns:1fr}.ttgen-h{flex-direction:row;gap:10px;align-items:baseline}}
+
+/* layout switch */
+.layrow{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:center;margin-bottom:6px}
+.btn:disabled{opacity:.35;cursor:default}
+.mpick{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) auto auto auto;gap:6px;margin-bottom:12px}
+.mpick input,.mpick select{background:var(--ink-2);border:1px solid var(--line);border-radius:6px;padding:7px 8px;min-width:0;font-size:14px}
+.mpick .btn{padding:4px 10px;font-size:16px}
+
+/* ===== Mobile 9:16: everything compact, as little scrolling as possible ===== */
+body.m{font-size:14px}
+body.m .wrap{max-width:440px;padding-inline:12px;padding-block:12px 40px}
+body.m .layrow .label{display:none}
+body.m #clOpen,body.m #infoOpen{font-size:11px;padding:2px 8px}
+body.m .layrow{justify-content:center}
+body.m .hero{gap:8px;padding-block:4px 10px}
+body.m .hero h1{font-size:32px}
+body.m .hero p,body.m .ribbon-legend{display:none}
+body.m .facts{gap:4px 14px}
+body.m .fact b{font-size:19px;display:inline;margin-right:4px}
+body.m .fact span{font-size:12px}
+body.m .ribbon{gap:2px}
+body.m .ribbon div{height:20px}
+body.m .ribbon div b{font-size:7px}
+body.m .bar{margin-inline:-12px;padding-inline:12px;padding-block:6px;gap:6px}
+body.m .bar>div{flex-wrap:nowrap}
+body.m .chips{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none;padding-bottom:2px}
+body.m .chips::-webkit-scrollbar{display:none}
+body.m .chip{font-size:12px;padding:3px 9px;white-space:nowrap;flex:none}
+body.m .seg button{font-size:12px;padding:3px 8px}
+body.m .bar .label{font-size:10px}
+body.m .count{font-size:11px}
+body.m .src{font-size:11px}
+body.m .src>span:not(.pill){display:none}
+body.m .tabs{margin-block:10px 10px;gap:0}
+body.m .tab{font-size:15px;padding:6px 9px}
+body.m .ph{padding-bottom:8px;gap:4px}
+body.m .ph h2{font-size:28px}
+body.m .ph .note{font-size:13px}
+body.m .profile{gap:12px}
+body.m .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+body.m .stat{padding-left:8px}
+body.m .stat b{font-size:18px}
+body.m .stat span{font-size:11px;line-height:1.25;display:block}
+body.m .tl{overflow:visible}
+body.m .tlg{grid-template-columns:repeat(var(--n),minmax(0,1fr));min-width:0;gap:2px}
+body.m .gen{font-size:0;padding:0;height:4px;border-radius:1px}
+body.m .cell{height:34px;border-radius:2px;padding-bottom:1px}
+body.m .cell .ab{font-size:7px;writing-mode:vertical-rl;transform:rotate(180deg)}
+body.m .cell .gstar{font-size:6px;padding:0 1px;top:1px;right:1px}
+body.m .cell.debut::after{font-size:9px;top:0;left:1px}
+body.m .famcard{padding:4px 8px;font-size:13px}
+body.m .boards{gap:10px}
+body.m .board{padding:10px;gap:6px}
+body.m .board h3{font-size:18px}
+body.m .board p{font-size:12px}
+body.m .rows{font-size:13px;gap:3px 6px}
+body.m .bartrack{height:19px}
+body.m .row .val{font-size:11px}
+body.m .cloud{font-size:13px;gap:2px 10px}
+body.m .trow{grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;padding:2px 4px}
+body.m .trow .stack{grid-column:1/-1;order:3;height:10px}
+body.m .trow .tt{font-size:13px}
+body.m .roster{padding:10px;margin-top:10px}
+body.m .roster h3{font-size:20px}
+body.m .rgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 10px}
+body.m .rgrid div{font-size:12.5px}
+body.m .legend{font-size:11px;gap:8px}
+body.m .ttgens{gap:6px}
+body.m .ttgen{grid-template-columns:44px minmax(0,1fr);gap:6px}
+body.m .ttgen-h{flex-direction:column;padding:2px 0 2px 6px;border-left-width:3px}
+body.m .ttgen-h b{font-size:13px}
+body.m .ttgen-h span{display:none}
+body.m .tttiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+body.m .tttile{min-width:0;padding:5px 6px 4px;border-radius:5px}
+body.m .tttile b{font-size:14px}
+body.m .tttile small{font-size:9.5px}
+body.m .tttile .gstar{font-size:8px;top:4px;right:4px;padding:0 2px}
+body.m .ttsel{margin-top:10px;gap:8px}
+body.m .ttsel-h{padding-bottom:6px}
+body.m .ttsel-h h2{font-size:21px}
+body.m .ttstats{gap:2px 12px;font-size:12px}
+body.m .ttstats b{font-size:16px}
+body.m .ttctl .legend{display:none}
+body.m .ttctl .seg button{font-size:11px;padding:3px 6px}
+body.m .mtiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+body.m .mtile{padding:7px 7px 7px 10px;gap:4px;border-radius:6px}
+body.m .mtile::before{width:3px}
+body.m .mtile .top{flex-direction:column;gap:3px}
+body.m .mtile .top .mname{font-size:13.5px}
+body.m .st{font-size:8px;padding:1px 4px}
+body.m .mtile .gap{font-size:11px;line-height:1.25}
+body.m .mtile .gap b{font-size:15px}
+body.m .strip i{height:5px}
+body.m .mtile .prev,body.m .mtile .tags{display:none}
+body.m .mx th{height:84px;font-size:9px}
+body.m .mx td.c{width:11px;height:11px}
+body.m .mx td.nm{max-width:118px;font-size:11px}
+body.m .mx-ctl span.muted{display:none}
+/* fan favourites */
+.rate{font-family:var(--f-data);font-size:11px;color:var(--brass-2)}
+.frank{font-family:var(--f-data);font-size:11px;color:var(--brass-2);margin-left:auto;margin-right:6px;white-space:nowrap}
+.fanctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.fangrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px}
+.fanwide{grid-column:1/-1}
+.scatter svg{width:100%;height:auto;display:block}
+.scatter .q{font-family:var(--f-data);font-size:10px;letter-spacing:.1em;text-transform:uppercase;fill:var(--bone-3)}
+.scatter .ax{font-family:var(--f-data);font-size:10px;fill:var(--bone-3)}
+.scatter circle{cursor:pointer;transition:r .12s}
+.scatter circle:hover{r:8}
+.avgbars{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 10px;align-items:center;font-size:14px}
+.avgbars .trk{height:16px;background:var(--ink-3);border-radius:3px;position:relative;overflow:hidden}
+.avgbars .trk i{position:absolute;inset:0 auto 0 0;border-radius:3px;animation:grow .6s ease both;transform-origin:left}
+.avgbars .v{font-family:var(--f-data);font-size:12px;color:var(--bone-2);white-space:nowrap}
+.hl{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch}
+.hlc{border:1px solid var(--line);border-radius:10px;padding:16px 12px;background:var(--ink-3);cursor:pointer;display:grid;gap:6px;justify-items:center;text-align:center;position:relative;overflow:hidden;font:inherit;color:inherit}
+.hlc::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--mc)}
+.hlc:hover{border-color:var(--brass)}
+.hlc b{font-family:var(--f-display);font-size:22px;line-height:1.1}
+.hlc .res{font-family:var(--f-data);font-size:13px}
+.hlc.win{border-color:#6fd08a}.hlc.lose{border-color:#e0606a}
+.hlvs{align-self:center;font-family:var(--f-display);font-size:20px;color:var(--bone-3)}
+.hlscore{display:flex;gap:16px;font-size:14px;color:var(--bone-2);flex-wrap:wrap;align-items:center}
+.hlscore b{font-family:var(--f-display);font-size:20px;color:var(--bone)}
+body.m .fangrid{grid-template-columns:1fr;gap:10px}
+body.m .hlc{padding:10px 6px}
+body.m .hlc b{font-size:16px}
+body.m .avgbars{font-size:12px;gap:4px 8px}
+body.m .tttile .rate{font-size:9px}
+.tictl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.tttile small.ti{font-family:var(--f-data);font-size:11px;color:var(--bone-2);white-space:nowrap}
+body.m .tictl{margin-bottom:8px;gap:4px}
+body.m .tictl .label{display:none}
+body.m .tictl .seg{display:flex;flex-wrap:wrap;border:0;gap:3px}
+body.m .tictl .seg button{border:1px solid var(--line);border-radius:4px;font-size:10.5px;padding:2px 6px}
+body.m .tttile small.ti{font-size:9px;white-space:normal;line-height:1.2}
+.layrow{gap:8px 12px}
+.clwrap{position:fixed;inset:0;z-index:60;background:rgba(5,9,10,.72);display:flex;align-items:flex-start;justify-content:center;padding:max(24px,env(safe-area-inset-top,0px)) 16px 24px;overflow-y:auto}
+.clwrap[hidden]{display:none!important}
+.clbox{background:var(--ink-2);border:1px solid var(--line);border-radius:12px;max-width:640px;width:100%;padding:18px 20px;display:grid;gap:12px}
+.links{display:grid;gap:8px}
+.lnk{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--ink-3);color:var(--bone);text-decoration:none}
+.lnk:hover{border-color:var(--brass)}
+.lnk b{font-family:var(--f-display);font-size:18px}
+.lnk span{font-family:var(--f-data);font-size:12px;color:var(--bone-2)}
+.lnk.sup{border-color:var(--brass);background:rgba(214,172,94,.12)}
+.lnk.sup b{color:var(--brass-2)}
+.clhead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.clhead h2{font-size:28px}
+.cllist{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.cllist li{border-left:2px solid var(--line);padding-left:14px;display:grid;gap:4px}
+.cllist li:first-child{border-color:var(--brass)}
+.cllist .v{display:flex;gap:10px;align-items:baseline}
+.cllist .v b{font-family:var(--f-display);font-size:20px;color:var(--brass-2)}
+.cllist .v span{font-family:var(--f-data);font-size:11px;color:var(--bone-3)}
+.cllist ul{margin:0;padding-left:18px;color:var(--bone-2);font-size:14px;display:grid;gap:2px}
+body.m .clbox{padding:14px}
+body.m .cllist ul{font-size:13px}
+.tagdd{position:relative}
+.ddbtn{display:inline-flex;align-items:center;gap:8px;background:var(--ink-2);border:1px solid var(--line);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;color:var(--bone);max-width:100%}
+.ddbtn:hover,.ddbtn[aria-expanded="true"]{border-color:var(--brass)}
+.ddbtn .car{color:var(--bone-3);font-size:11px}
+.ddpanel{position:absolute;top:calc(100% + 6px);left:0;z-index:40;width:min(520px,calc(100vw - 32px));max-height:min(70vh,560px);overflow-y:auto;background:var(--ink-2);border:1px solid var(--line);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.45);padding:12px;display:grid;gap:12px}
+.ddpanel[hidden]{display:none!important}
+.ddtop{display:flex;gap:6px;align-items:center;position:sticky;top:-12px;background:var(--ink-2);padding-block:4px}
+.ddgrp{display:grid;gap:4px}
+.ddrows{display:grid;grid-template-columns:1fr;gap:1px}
+.ddrows.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ddrow{display:flex;align-items:center;gap:8px;background:none;border:0;border-radius:5px;padding:5px 6px;cursor:pointer;text-align:left;font-size:14px;color:var(--bone-3)}
+.ddrow:hover{background:var(--ink-3)}
+.ddrow[aria-pressed="true"]{color:var(--bone)}
+.ddrow .box{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--bone-3);flex:none;display:grid;place-items:center}
+.ddrow[aria-pressed="true"] .box{background:var(--brass);border-color:var(--brass)}
+.ddrow[aria-pressed="true"] .box::after{content:"✓";font-size:10px;color:var(--ink);font-weight:700}
+.ddrow small{margin-left:auto;font-family:var(--f-data);font-size:10px;color:var(--bone-3)}
+body.m .ddbtn{font-size:12px;padding:3px 8px}
+body.m .ddpanel{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));top:auto;width:auto;max-height:65vh}
+body.m .ddrows.two{grid-template-columns:1fr 1fr}
+body.m .ddrow{font-size:12.5px;padding:4px}
+body.m .hype{font-family:var(--f-display);font-size:15px;color:var(--brass-2);margin-right:4px}
+.game{max-width:720px;margin:0 auto;padding:22px;gap:14px}
+.game .hlc{padding:26px 14px;min-height:150px;align-content:center}
+.game .hlc b{font-size:28px}
+.game .hlc .res{font-size:18px}
+.game .hlvs{font-size:26px}
+.game .hlscore{justify-content:center;font-size:15px}
+body.m .game{padding:12px}
+body.m .game .hlc{padding:14px 6px;min-height:110px}
+body.m .game .hlc b{font-size:18px}
+footer{font-size:11px;margin-top:20px}
+.mx-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.mx-ctl select{background:var(--ink-2);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+.mx{overflow:auto;max-height:78vh;border:1px solid var(--line);border-radius:8px;background:var(--ink-2)}
+.mx table{border-collapse:separate;border-spacing:2px;font-size:12px}
+.mx th{position:sticky;top:0;background:var(--ink-2);z-index:2;font-family:var(--f-data);font-weight:500;font-size:10px;color:var(--bone-3);padding:4px 0;height:120px;vertical-align:bottom}
+.mx th div{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;margin:0 auto}
+.mx th.nm{left:0;z-index:3;text-align:left;writing-mode:initial}
+.mx td.nm{position:sticky;left:0;background:var(--ink-2);padding:0 8px 0 4px;white-space:nowrap;z-index:1;max-width:190px;overflow:hidden;text-overflow:ellipsis}
+.mx td.c{width:18px;height:14px;border-radius:2px;background:var(--ink-3)}
+.mx tr:hover td.nm{background:var(--ink-3)}
+.mx td.gsep{width:4px}
+.tip{position:fixed;pointer-events:none;background:var(--ink-3);border:1px solid var(--line);padding:5px 9px;border-radius:5px;font-size:13px;z-index:50;display:none;max-width:260px}
+
+.src{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:13px;color:var(--bone-2)}
+.src .pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-data);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:99px;border:1px solid var(--line)}
+.src .pill i{width:7px;height:7px;border-radius:50%;background:var(--bone-3)}
+.src .pill.live i{background:#6fd08a;box-shadow:0 0 8px #6fd08a}
+.src .pill.warn i{background:var(--brass)}
+.src .pill.bad i{background:#e0606a}
+.src a{color:var(--brass)}
+.src button{background:none;border:1px solid var(--line);border-radius:5px;padding:1px 8px;cursor:pointer;font-size:12px;color:var(--bone)}
+.src button:hover{border-color:var(--brass)}
+.gstar{font-family:var(--f-data);font-size:.72em;font-weight:500;letter-spacing:.02em;color:var(--brass-2);border:1px solid rgba(214,172,94,.55);border-radius:3px;padding:0 3px;margin-left:5px;vertical-align:1px;white-space:nowrap}
+.cell .gstar{position:absolute;top:3px;right:3px;margin:0;font-size:9px;background:rgba(14,21,23,.75)}
+.mx th .gstar{writing-mode:horizontal-tb;display:inline-block;transform:rotate(90deg);margin:4px 0 0}
+.ribbon div b{position:absolute;top:2px;left:0;right:0;text-align:center;font-family:var(--f-data);font-size:9px;font-weight:500;color:rgba(0,0,0,.65)}
+.hype{font-family:var(--f-display);font-size:15px;color:var(--brass-2);margin-right:4px}
+.game{max-width:720px;margin:0 auto;padding:22px;gap:14px}
+.game .hlc{padding:26px 14px;min-height:150px;align-content:center}
+.game .hlc b{font-size:28px}
+.game .hlc .res{font-size:18px}
+.game .hlvs{font-size:26px}
+.game .hlscore{justify-content:center;font-size:15px}
+body.m .game{padding:12px}
+body.m .game .hlc{padding:14px 6px;min-height:110px}
+body.m .game .hlc b{font-size:18px}
+footer{margin-top:40px;font-size:13px;color:var(--bone-3);border-top:1px solid var(--line);padding-top:14px}
+
+@media (max-width:760px){
+  .best{grid-template-columns:1fr}
+  .list{max-height:340px}
+  .trow{grid-template-columns:minmax(0,1fr) 70px;}
+  .trow .stack{grid-column:1/-1;order:3}
+  .count{margin-left:0}
+  .boards{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="layrow"><div class="label">Field ledger of large monsters · Main series 2004 – 2027</div>
+    <div class="seg" id="laySeg" aria-label="Layout"><button type="button" data-lay="d" aria-pressed="true" title="Wide layout for desktop screens">▭ Desktop 16:9</button><button type="button" data-lay="m" aria-pressed="false" title="Compact layout for phones">▯ Mobile 9:16</button></div>
+    <span style="display:inline-flex;gap:6px"><button type="button" class="chip" id="infoOpen" aria-haspopup="dialog">ⓘ About</button><button type="button" class="chip" id="clOpen" aria-haspopup="dialog">Changelog · v22</button></span></div>
+  <header class="hero">
+    <h1>Wyvern <span>Compendium</span></h1>
+    <p>Every large monster of the main Monster Hunter series, from the first Rathalos on PS2 to the announced Wilds expansion. Pick a monster, compare rankings, and see which titles brought the most first-time hunts.</p>
+    <div class="facts" id="facts"></div>
+    <div>
+      <div class="ribbon" id="ribbon"></div>
+      <div class="ribbon-legend label" style="margin-top:6px"><span>2004</span><span>Bar height inside = share of debut monsters</span><span>2027</span></div>
+    </div>
+  </header>
+
+  <div class="bar" role="region" aria-label="Filters">
+    <div class="tagdd" id="catChips"></div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="label">Count by</span>
+      <div class="seg" id="unitSeg"><button type="button" data-u="t" aria-pressed="true">Titles</button><button type="button" data-u="g" aria-pressed="false">Generations</button></div></div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="label">Fan</span>
+      <div class="seg" id="fanSeg"><button type="button" data-fan="rate" aria-pressed="true" title="Show fan votes as a 1–10 rating">★ Rating</button><button type="button" data-fan="rank" aria-pressed="false" title="Show fan votes as the vote rank">#&nbsp;Rank</button></div></div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="label">Family</span>
+      <div class="seg" id="famSeg"><button type="button" data-f="f" aria-pressed="false" title="Only the main monster of each family">Family</button><button type="button" data-f="s" aria-pressed="true" title="Every form counted on its own">Separate</button></div></div>
+    <button type="button" class="chip" id="waToggle" aria-pressed="true"><span class="dot"></span>Wilds: Ascendance (preview)</button>
+    <div class="count mono" id="count"></div>
+    <div class="src" id="src" role="status" aria-live="polite"></div>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-tt" aria-selected="false" data-p="tt">Titles</button>
+    <button class="tab" role="tab" id="t-best" aria-selected="true" data-p="best">Monster</button>
+    <button class="tab" role="tab" id="t-rank" aria-selected="false" data-p="rank">Rankings</button>
+    <button class="tab" role="tab" id="t-fan" aria-selected="false" data-p="fan">Fan Favourites</button>
+    <button class="tab" role="tab" id="t-graph" aria-selected="false" data-p="graph">Interactive Graphs</button>
+    <button class="tab" role="tab" id="t-titles" aria-selected="false" data-p="titles">Title stats</button>
+    <button class="tab" role="tab" id="t-mx" aria-selected="false" data-p="mx">Matrix</button>
+    <button class="tab" role="tab" id="t-game" aria-selected="false" data-p="game">Game</button>
+  </nav>
+
+  <main id="main"></main>
+
+  <footer>Data: your Google Sheet “MH Monster Compendium”, read live through your Google Sheets connector each time the page opens. If it cannot be reached, the page shows the built-in snapshot from 7 October 2026, compiled from the per-game lists of the Monster Hunter Wiki. Fan ranks: Monster Hunter 20th Anniversary Hunters' Choice vote (monsterhunter.com), read from the FavRank column. Release dates are the first Japanese release. Wilds: Ascendance is due in 2027; its roster shows only monsters confirmed so far. Tempered, Arch-Tempered, Hyper and Afflicted are difficulty tiers and are not counted as separate monsters.</footer>
+</div>
+<div class="tip" id="tip"></div>
+<div class="clwrap" id="infoWrap" hidden><div class="clbox" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+  <div class="clhead"><h2 id="infoTitle">About</h2><button type="button" class="btn" id="infoClose" aria-label="Close about">✕</button></div>
+  <p class="note" style="margin:0">Wyvern Compendium is made and maintained by <b style="color:var(--brass-2)">Fox Invictus</b>. Follow along for updates, or support the project if it's useful to you.</p>
+  <div class="links">
+    <a class="lnk" href="https://x.com/fox_invictus" target="_blank" rel="noopener"><b>X</b><span>@fox_invictus</span></a>
+    <a class="lnk" href="https://www.youtube.com/@FoxInvictus" target="_blank" rel="noopener"><b>YouTube</b><span>@FoxInvictus</span></a>
+    <a class="lnk sup" href="https://www.paypal.com/donate?hosted_button_id=7C863EJY5KN2N" target="_blank" rel="noopener"><b>Support on PayPal</b><span>Donate to the project</span></a>
+  </div>
+  <p class="muted" style="margin:0;font-size:13px">Data: per-game monster lists, classes and elements from the Monster Hunter Wiki (monsterhunterwiki.org); fan ranks from Capcom's 20th Anniversary Hunters' Choice vote. Monster Hunter is a trademark of Capcom. This is an unofficial fan project.</p>
+</div></div>
+<div class="clwrap" id="clWrap" hidden><div class="clbox" role="dialog" aria-modal="true" aria-labelledby="clTitle">
+  <div class="clhead"><h2 id="clTitle">Changelog</h2><button type="button" class="btn" id="clClose" aria-label="Close changelog">✕</button></div>
+  <ol class="cllist" id="clList"></ol></div></div>
+
+<script>
+const DATA = {"games":[{"k":"MH1","t":"Monster Hunter","g":1,"d":"2004-03-11","x":null},{"k":"MHG","t":"Monster Hunter G","g":1,"d":"2005-01-20","x":"MH1"},{"k":"MHF1","t":"Monster Hunter Freedom","g":1,"d":"2005-12-01","x":null},{"k":"MH2","t":"Monster Hunter 2 (Dos)","g":2,"d":"2006-02-16","x":null},{"k":"MHF2","t":"Monster Hunter Freedom 2","g":2,"d":"2007-02-22","x":null},{"k":"MHFU","t":"Monster Hunter Freedom Unite","g":2,"d":"2008-03-27","x":"MHF2"},{"k":"MH3","t":"Monster Hunter Tri","g":3,"d":"2009-08-01","x":null},{"k":"MHP3","t":"Monster Hunter Portable 3rd","g":3,"d":"2010-12-01","x":null},{"k":"MH3U","t":"Monster Hunter 3 Ultimate","g":3,"d":"2011-12-10","x":"MH3"},{"k":"MH4","t":"Monster Hunter 4","g":4,"d":"2013-09-14","x":null},{"k":"MH4U","t":"Monster Hunter 4 Ultimate","g":4,"d":"2014-10-11","x":"MH4"},{"k":"MHGen","t":"Monster Hunter Generations","g":4,"d":"2015-11-28","x":null},{"k":"MHGU","t":"Monster Hunter Generations Ultimate","g":4,"d":"2017-03-18","x":"MHGen"},{"k":"MHWorld","t":"Monster Hunter: World","g":5,"d":"2018-01-26","x":null},{"k":"MHWI","t":"Monster Hunter World: Iceborne","g":5,"d":"2019-09-06","x":"MHWorld"},{"k":"MHRise","t":"Monster Hunter Rise","g":5,"d":"2021-03-26","x":null},{"k":"MHRS","t":"Monster Hunter Rise: Sunbreak","g":5,"d":"2022-06-30","x":"MHRise"},{"k":"MHWilds","t":"Monster Hunter Wilds","g":6,"d":"2025-02-28","x":null},{"k":"MHWA","t":"Monster Hunter Wilds: Ascendance","g":6,"d":"2027 (TBA)","x":"MHWilds"}],"mons":[{"n":"Basarios","c":"Main, Flying Wyvern","b":"Basarios","a":"1111110001101001100","r":167},{"n":"Ruby Basarios","c":"Subspecies, Flying Wyvern","b":"Basarios","a":"0000000001100000000","r":204},{"n":"Cephadrome","c":"Main, Piscine Wyvern","b":"Cephadrome","a":"1111110000111000000","r":183},{"n":"Diablos","c":"Main, Flying Wyvern","b":"Diablos","a":"1111111110101111100","r":71},{"n":"Black Diablos","c":"Subspecies, Flying Wyvern","b":"Diablos","a":"0111110110100110000","r":101},{"n":"Apex Diablos","c":"Variant, Flying Wyvern","b":"Diablos","a":"0000000000000001100","r":178},{"n":"Bloodbath Diablos","c":"Deviant, Flying Wyvern, Flagship","b":"Diablos","a":"0000000000001000000","r":36},{"n":"Fatalis","c":"Main, Elder Dragon","b":"Fatalis","a":"1111110001101010000","r":8},{"n":"Crimson Fatalis","c":"Subspecies, Elder Dragon","b":"Fatalis","a":"0111110001101000000","r":77},{"n":"White Fatalis","c":"Subspecies, Elder Dragon","b":"Fatalis","a":"0001110000101000000","r":15},{"n":"Gendrome","c":"Main, Bird Wyvern","b":"Gendrome","a":"1111110001111000000","r":217},{"n":"Gravios","c":"Main, Flying Wyvern","b":"Gravios","a":"1111110001101000011","r":139},{"n":"Black Gravios","c":"Subspecies, Flying Wyvern","b":"Gravios","a":"0111110001100000000","r":139},{"n":"Gypceros","c":"Main, Bird Wyvern","b":"Gypceros","a":"1111110001111000011","r":145},{"n":"Purple Gypceros","c":"Subspecies, Bird Wyvern","b":"Gypceros","a":"0111110001100000000","r":221},{"n":"Iodrome","c":"Main, Bird Wyvern","b":"Iodrome","a":"1111110001111000000","r":227},{"n":"Khezu","c":"Main, Flying Wyvern","b":"Khezu","a":"1111110001111001101","r":32},{"n":"Red Khezu","c":"Subspecies, Flying Wyvern","b":"Khezu","a":"0111110001100000000","r":132},{"n":"Kirin","c":"Main, Elder Dragon","b":"Kirin","a":"1111110001111110000","r":39},{"n":"Oroshi Kirin","c":"Subspecies, Elder Dragon","b":"Kirin","a":"0000000001100000000","r":100},{"n":"Lao-Shan Lung","c":"Main, Elder Dragon","b":"Lao-Shan Lung","a":"1111110000001000001","r":61},{"n":"Ashen Lao-Shan Lung","c":"Subspecies, Elder Dragon","b":"Lao-Shan Lung","a":"0111110000000000000","r":146},{"n":"Monoblos","c":"Main, Flying Wyvern","b":"Monoblos","a":"1111110000100000000","r":109},{"n":"White Monoblos","c":"Subspecies, Flying Wyvern","b":"Monoblos","a":"0111110000100000000","r":147},{"n":"Plesioth","c":"Main, Piscine Wyvern","b":"Plesioth","a":"1111110010111000000","r":91},{"n":"Green Plesioth","c":"Subspecies, Piscine Wyvern","b":"Plesioth","a":"0111110010100000000","r":181},{"n":"Rathalos","c":"Main, Flying Wyvern, Flagship","b":"Rathalos","a":"1111111111111111111","r":21},{"n":"Azure Rathalos","c":"Subspecies, Flying Wyvern, Flagship","b":"Rathalos","a":"0111110011100110000","r":112},{"n":"Silver Rathalos","c":"Rare Species, Flying Wyvern","b":"Rathalos","a":"0111110111111010100","r":74},{"n":"Apex Rathalos","c":"Variant, Flying Wyvern","b":"Rathalos","a":"0000000000000001100","r":149},{"n":"Guardian Rathalos","c":"Variant, Construct","b":"Rathalos","a":"0000000000000000011","r":null},{"n":"Dreadking Rathalos","c":"Deviant, Flying Wyvern","b":"Rathalos","a":"0000000000011000000","r":66},{"n":"Rathian","c":"Main, Flying Wyvern","b":"Rathian","a":"1111111111111111111","r":78},{"n":"Pink Rathian","c":"Subspecies, Flying Wyvern","b":"Rathian","a":"0111110011100110000","r":119},{"n":"Gold Rathian","c":"Rare Species, Flying Wyvern","b":"Rathian","a":"0111110111111010100","r":113},{"n":"Apex Rathian","c":"Variant, Flying Wyvern","b":"Rathian","a":"0000000000000001100","r":177},{"n":"Rathian Variant (unnamed)","c":"Variant, Flying Wyvern","b":"Rathian","a":"0000000000000000001","r":null},{"n":"Dreadqueen Rathian","c":"Deviant, Flying Wyvern","b":"Rathian","a":"0000000000011000000","r":137},{"n":"Velocidrome","c":"Main, Bird Wyvern","b":"Velocidrome","a":"1111110001111000000","r":154},{"n":"Yian Kut-Ku","c":"Main, Bird Wyvern","b":"Yian Kut-Ku","a":"1111110001111000011","r":35},{"n":"Blue Yian Kut-Ku","c":"Subspecies, Bird Wyvern","b":"Yian Kut-Ku","a":"0111110001100000000","r":204},{"n":"Yian Garuga","c":"Main, Bird Wyvern","b":"Yian Garuga","a":"0011110001111010000","r":83},{"n":"Scarred Yian Garuga","c":"Variant, Bird Wyvern","b":"Yian Garuga","a":"0010110000000010000","r":128},{"n":"Deadeye Yian Garuga","c":"Deviant, Bird Wyvern","b":"Yian Garuga","a":"0000000000011000000","r":118},{"n":"Blangonga","c":"Main, Fanged Beast","b":"Blangonga","a":"0001110000011000011","r":190},{"n":"Copper Blangonga","c":"Subspecies, Fanged Beast","b":"Blangonga","a":"0000010000000000000","r":216},{"n":"Bulldrome","c":"Main, Fanged Beast","b":"Bulldrome","a":"0001110100011000000","r":116},{"n":"Chameleos","c":"Main, Elder Dragon","b":"Chameleos","a":"0001110000111001100","r":62},{"n":"Risen Chameleos","c":"Variant, Elder Dragon","b":"Chameleos","a":"0000000000000000100","r":168},{"n":"Congalala","c":"Main, Fanged Beast","b":"Congalala","a":"0001110001101000011","r":122},{"n":"Emerald Congalala","c":"Subspecies, Fanged Beast","b":"Congalala","a":"0000010001100000000","r":192},{"n":"Daimyo Hermitaur","c":"Main, Carapaceon","b":"Daimyo Hermitaur","a":"0001110000111000100","r":134},{"n":"Plum Daimyo Hermitaur","c":"Subspecies, Carapaceon","b":"Daimyo Hermitaur","a":"0000010000100000000","r":212},{"n":"Stonefist Hermitaur","c":"Deviant, Carapaceon","b":"Daimyo Hermitaur","a":"0000000000011000000","r":198},{"n":"King Shakalaka","c":"Main, Lynian","b":"King Shakalaka","a":"0001110000000000000","r":111},{"n":"Kushala Daora","c":"Main, Elder Dragon, Flagship","b":"Kushala Daora","a":"0001110001111111101","r":47},{"n":"Rusted Kushala Daora","c":"Variant, Elder Dragon","b":"Kushala Daora","a":"0001110000100000000","r":160},{"n":"Risen Kushala Daora","c":"Variant, Elder Dragon","b":"Kushala Daora","a":"0000000000000000100","r":166},{"n":"Lunastra","c":"Main, Elder Dragon","b":"Lunastra","a":"0001110000000110000","r":96},{"n":"Rajang","c":"Main, Fanged Beast","b":"Rajang","a":"0001110001111011100","r":57},{"n":"Furious Rajang","c":"Variant, Fanged Beast","b":"Rajang","a":"0000010001111010100","r":24},{"n":"Shen Gaoren","c":"Main, Carapaceon","b":"Shen Gaoren","a":"0001110000000000000","r":124},{"n":"Shogun Ceanataur","c":"Main, Carapaceon","b":"Shogun Ceanataur","a":"0001110000011000100","r":157},{"n":"Terra Shogun Ceanataur","c":"Subspecies, Carapaceon","b":"Shogun Ceanataur","a":"0000010000000000000","r":210},{"n":"Rustrazor Ceanataur","c":"Deviant, Carapaceon","b":"Shogun Ceanataur","a":"0000000000001000000","r":171},{"n":"Teostra","c":"Main, Elder Dragon","b":"Teostra","a":"0001110001111111101","r":59},{"n":"Risen Teostra","c":"Variant, Elder Dragon","b":"Teostra","a":"0000000000000000100","r":169},{"n":"Yama Tsukami","c":"Main, Elder Dragon","b":"Yama Tsukami","a":"0001010000000000000","r":53},{"n":"Akantor","c":"Main, Flying Wyvern","b":"Akantor","a":"0000110101111000000","r":44},{"n":"Giadrome","c":"Main, Bird Wyvern","b":"Giadrome","a":"0000110000001000000","r":192},{"n":"Tigrex","c":"Main, Flying Wyvern, Flagship","b":"Tigrex","a":"0000110101111011100","r":23},{"n":"Brute Tigrex","c":"Subspecies, Flying Wyvern","b":"Tigrex","a":"0000000101100010000","r":123},{"n":"Molten Tigrex","c":"Rare Species, Flying Wyvern","b":"Tigrex","a":"0000000001100000000","r":75},{"n":"Grimclaw Tigrex","c":"Deviant, Flying Wyvern","b":"Tigrex","a":"0000000000011000000","r":110},{"n":"Hypnocatrice","c":"Main, Bird Wyvern","b":"Hypnocatrice","a":"0000010000000000000","r":176},{"n":"Lavasioth","c":"Main, Piscine Wyvern","b":"Lavasioth","a":"0000010000011110000","r":179},{"n":"Nargacuga","c":"Main, Flying Wyvern, Flagship","b":"Nargacuga","a":"0000010110011011100","r":7},{"n":"Green Nargacuga","c":"Subspecies, Flying Wyvern","b":"Nargacuga","a":"0000000110000000000","r":181},{"n":"Lucent Nargacuga","c":"Rare Species, Flying Wyvern","b":"Nargacuga","a":"0000000010000000100","r":54},{"n":"Silverwind Nargacuga","c":"Deviant, Flying Wyvern","b":"Nargacuga","a":"0000000000011000000","r":84},{"n":"Ukanlos","c":"Main, Flying Wyvern","b":"Ukanlos","a":"0000010100111000000","r":107},{"n":"Vespoid Queen","c":"Main, Neopteran","b":"Vespoid Queen","a":"0000010000000000000","r":82},{"n":"Agnaktor","c":"Main, Leviathan","b":"Agnaktor","a":"0000001110011000000","r":92},{"n":"Glacial Agnaktor","c":"Subspecies, Leviathan","b":"Agnaktor","a":"0000000110000000000","r":165},{"n":"Alatreon","c":"Main, Elder Dragon","b":"Alatreon","a":"0000001110011010000","r":10},{"n":"Barioth","c":"Main, Flying Wyvern","b":"Barioth","a":"0000001110001011100","r":70},{"n":"Sand Barioth","c":"Subspecies, Flying Wyvern","b":"Barioth","a":"0000000110000000000","r":200},{"n":"Frostfang Barioth","c":"Variant, Flying Wyvern","b":"Barioth","a":"0000000000000010000","r":89},{"n":"Barroth","c":"Main, Brute Wyvern","b":"Barroth","a":"0000001110001111100","r":120},{"n":"Jade Barroth","c":"Subspecies, Brute Wyvern","b":"Barroth","a":"0000000110000000000","r":201},{"n":"Ceadeus","c":"Main, Elder Dragon","b":"Ceadeus","a":"0000001010000000000","r":67},{"n":"Goldbeard Ceadeus","c":"Subspecies, Elder Dragon","b":"Ceadeus","a":"0000000010000000000","r":143},{"n":"Deviljho","c":"Main, Brute Wyvern","b":"Deviljho","a":"0000001111111110000","r":40},{"n":"Savage Deviljho","c":"Variant, Brute Wyvern","b":"Deviljho","a":"0000000011111010000","r":42},{"n":"Gigginox","c":"Main, Flying Wyvern","b":"Gigginox","a":"0000001110000000000","r":94},{"n":"Baleful Gigginox","c":"Subspecies, Flying Wyvern","b":"Gigginox","a":"0000000110000000000","r":187},{"n":"Gobul","c":"Main, Leviathan","b":"Gobul","a":"0000001010000000000","r":114},{"n":"Great Baggi","c":"Main, Bird Wyvern","b":"Great Baggi","a":"0000001110000001100","r":224},{"n":"Great Jaggi","c":"Main, Bird Wyvern","b":"Great Jaggi","a":"0000001111100000000","r":68},{"n":"Jhen Mohran","c":"Main, Elder Dragon","b":"Jhen Mohran","a":"0000001110000000000","r":98},{"n":"Hallowed Jhen Mohran","c":"Subspecies, Elder Dragon","b":"Jhen Mohran","a":"0000000010000000000","r":170},{"n":"Lagiacrus","c":"Main, Leviathan, Flagship","b":"Lagiacrus","a":"0000001010011000011","r":3},{"n":"Ivory Lagiacrus","c":"Subspecies, Leviathan","b":"Lagiacrus","a":"0000000010000000000","r":97},{"n":"Abyssal Lagiacrus","c":"Rare Species, Leviathan","b":"Lagiacrus","a":"0000000010000000000","r":12},{"n":"Qurupeco","c":"Main, Bird Wyvern","b":"Qurupeco","a":"0000001110000000000","r":86},{"n":"Crimson Qurupeco","c":"Subspecies, Bird Wyvern","b":"Qurupeco","a":"0000000110000000000","r":209},{"n":"Royal Ludroth","c":"Main, Leviathan","b":"Royal Ludroth","a":"0000001110011001100","r":138},{"n":"Purple Ludroth","c":"Subspecies, Leviathan","b":"Royal Ludroth","a":"0000000110000000000","r":190},{"n":"Uragaan","c":"Main, Brute Wyvern","b":"Uragaan","a":"0000001110011110000","r":158},{"n":"Steel Uragaan","c":"Subspecies, Brute Wyvern","b":"Uragaan","a":"0000000110000000000","r":228},{"n":"Crystalbeard Uragaan","c":"Deviant, Brute Wyvern","b":"Uragaan","a":"0000000000011000000","r":199},{"n":"Amatsu","c":"Main, Elder Dragon","b":"Amatsu","a":"0000000100011000100","r":30},{"n":"Arzuros","c":"Main, Fanged Beast","b":"Arzuros","a":"0000000110011001100","r":126},{"n":"Apex Arzuros","c":"Variant, Fanged Beast","b":"Arzuros","a":"0000000000000001100","r":226},{"n":"Redhelm Arzuros","c":"Deviant, Fanged Beast","b":"Arzuros","a":"0000000000011000000","r":212},{"n":"Duramboros","c":"Main, Brute Wyvern","b":"Duramboros","a":"0000000110011000000","r":121},{"n":"Rust Duramboros","c":"Subspecies, Brute Wyvern","b":"Duramboros","a":"0000000010000000000","r":222},{"n":"Great Wroggi","c":"Main, Bird Wyvern","b":"Great Wroggi","a":"0000000110000001100","r":220},{"n":"Lagombi","c":"Main, Fanged Beast","b":"Lagombi","a":"0000000111111001100","r":155},{"n":"Snowbaron Lagombi","c":"Deviant, Fanged Beast","b":"Lagombi","a":"0000000000011000000","r":207},{"n":"Nibelsnarf","c":"Main, Leviathan","b":"Nibelsnarf","a":"0000000110011000000","r":129},{"n":"Volvidon","c":"Main, Fanged Beast","b":"Volvidon","a":"0000000110011001100","r":207},{"n":"Zinogre","c":"Main, Fanged Wyvern, Flagship","b":"Zinogre","a":"0000000111111011100","r":1},{"n":"Stygian Zinogre","c":"Subspecies, Fanged Wyvern","b":"Zinogre","a":"0000000011100010000","r":11},{"n":"Apex Zinogre","c":"Variant, Fanged Wyvern","b":"Zinogre","a":"0000000000000001100","r":130},{"n":"Thunderlord Zinogre","c":"Deviant, Fanged Wyvern","b":"Zinogre","a":"0000000000011000000","r":58},{"n":"Brachydios","c":"Main, Brute Wyvern, Flagship","b":"Brachydios","a":"0000000011111010000","r":17},{"n":"Raging Brachydios","c":"Variant, Brute Wyvern","b":"Brachydios","a":"0000000000101010000","r":22},{"n":"Dire Miralis","c":"Main, Elder Dragon","b":"Dire Miralis","a":"0000000010000000000","r":51},{"n":"Dah'ren Mohran","c":"Main, Elder Dragon","b":"Dah'ren Mohran","a":"0000000001100000000","r":151},{"n":"Dalamadur","c":"Main, Elder Dragon","b":"Dalamadur","a":"0000000001100000000","r":29},{"n":"Shah Dalamadur","c":"Subspecies, Elder Dragon","b":"Dalamadur","a":"0000000000100000000","r":65},{"n":"Gore Magala","c":"Main, ???, Flagship","b":"Gore Magala","a":"0000000001111000111","r":5},{"n":"Chaotic Gore Magala","c":"Variant, ???","b":"Gore Magala","a":"0000000000101000100","r":27},{"n":"Kecha Wacha","c":"Main, Fanged Beast","b":"Kecha Wacha","a":"0000000001111000000","r":135},{"n":"Ash Kecha Wacha","c":"Subspecies, Fanged Beast","b":"Kecha Wacha","a":"0000000000100000000","r":215},{"n":"Najarala","c":"Main, Snake Wyvern","b":"Najarala","a":"0000000001111000000","r":131},{"n":"Tidal Najarala","c":"Subspecies, Snake Wyvern","b":"Najarala","a":"0000000000100000000","r":186},{"n":"Nerscylla","c":"Main, Temnoceran","b":"Nerscylla","a":"0000000001101000011","r":108},{"n":"Shrouded Nerscylla","c":"Subspecies, Temnoceran","b":"Nerscylla","a":"0000000000100000000","r":179},{"n":"Seltas","c":"Main, Neopteran","b":"Seltas","a":"0000000001111000000","r":172},{"n":"Desert Seltas","c":"Subspecies, Neopteran","b":"Seltas","a":"0000000000100000000","r":228},{"n":"Seltas Queen","c":"Main, Neopteran","b":"Seltas Queen","a":"0000000001111000000","r":104},{"n":"Desert Seltas Queen","c":"Subspecies, Neopteran","b":"Seltas Queen","a":"0000000000100000000","r":195},{"n":"Shagaru Magala","c":"Main, Elder Dragon","b":"Shagaru Magala","a":"0000000001111000100","r":19},{"n":"Risen Shagaru Magala","c":"Variant, Elder Dragon","b":"Shagaru Magala","a":"0000000000000000100","r":71},{"n":"Tetsucabra","c":"Main, Amphibian","b":"Tetsucabra","a":"0000000001111000000","r":114},{"n":"Berserk Tetsucabra","c":"Subspecies, Amphibian","b":"Tetsucabra","a":"0000000000100000000","r":219},{"n":"Drilltusk Tetsucabra","c":"Deviant, Amphibian","b":"Tetsucabra","a":"0000000000011000000","r":173},{"n":"Zamtrios","c":"Main, Amphibian","b":"Zamtrios","a":"0000000001111000000","r":81},{"n":"Tigerstripe Zamtrios","c":"Subspecies, Amphibian","b":"Zamtrios","a":"0000000000100000000","r":204},{"n":"Gogmazios","c":"Main, Elder Dragon","b":"Gogmazios","a":"0000000000100000011","r":28},{"n":"Seregios","c":"Main, Flying Wyvern, Flagship","b":"Seregios","a":"0000000000111000111","r":60},{"n":"Astalos","c":"Main, Flying Wyvern, Flagship","b":"Astalos","a":"0000000000011000100","r":45},{"n":"Boltreaver Astalos","c":"Deviant, Flying Wyvern","b":"Astalos","a":"0000000000001000000","r":26},{"n":"Gammoth","c":"Main, Fanged Beast, Flagship","b":"Gammoth","a":"0000000000011000000","r":85},{"n":"Elderfrost Gammoth","c":"Deviant, Fanged Beast","b":"Gammoth","a":"0000000000001000000","r":133},{"n":"Glavenus","c":"Main, Brute Wyvern, Flagship","b":"Glavenus","a":"0000000000011010000","r":25},{"n":"Acidic Glavenus","c":"Subspecies, Brute Wyvern","b":"Glavenus","a":"0000000000000010000","r":136},{"n":"Hellblade Glavenus","c":"Deviant, Brute Wyvern","b":"Glavenus","a":"0000000000011000000","r":37},{"n":"Great Maccao","c":"Main, Bird Wyvern","b":"Great Maccao","a":"0000000000011000000","r":144},{"n":"Larinoth","c":"Main, Herbivore","b":"Larinoth","a":"0000000000010000000","r":null},{"n":"Malfestio","c":"Main, Bird Wyvern","b":"Malfestio","a":"0000000000011000000","r":102},{"n":"Nightcloak Malfestio","c":"Deviant, Bird Wyvern","b":"Malfestio","a":"0000000000001000000","r":127},{"n":"Mizutsune","c":"Main, Leviathan, Flagship","b":"Mizutsune","a":"0000000000011001111","r":14},{"n":"Violet Mizutsune","c":"Rare Species, Leviathan","b":"Mizutsune","a":"0000000000000000100","r":63},{"n":"Apex Mizutsune","c":"Variant, Leviathan","b":"Mizutsune","a":"0000000000000001100","r":163},{"n":"Soulseer Mizutsune","c":"Deviant, Leviathan","b":"Mizutsune","a":"0000000000001000000","r":48},{"n":"Nakarkos","c":"Main, Elder Dragon","b":"Nakarkos","a":"0000000000011000000","r":79},{"n":"Ahtal-Ka","c":"Main, Neopteran","b":"Ahtal-Ka","a":"0000000000001000000","r":34},{"n":"Valstrax","c":"Main, Elder Dragon, Flagship","b":"Valstrax","a":"0000000000001000000","r":4},{"n":"Crimson Glow Valstrax","c":"Variant, Elder Dragon","b":"Valstrax","a":"0000000000000001100","r":20},{"n":"Risen Crimson Glow Valstrax","c":"Variant, Elder Dragon","b":"Valstrax","a":"0000000000000000100","r":33},{"n":"Anjanath","c":"Main, Brute Wyvern","b":"Anjanath","a":"0000000000000111100","r":106},{"n":"Fulgur Anjanath","c":"Subspecies, Brute Wyvern","b":"Anjanath","a":"0000000000000010000","r":150},{"n":"Guardian Fulgur Anjanath","c":"Variant, Construct","b":"Anjanath","a":"0000000000000000011","r":null},{"n":"Bazelgeuse","c":"Main, Flying Wyvern","b":"Bazelgeuse","a":"0000000000000111100","r":52},{"n":"Seething Bazelgeuse","c":"Variant, Flying Wyvern","b":"Bazelgeuse","a":"0000000000000010100","r":73},{"n":"Behemoth","c":"Main, Elder Dragon, Collaboration","b":"Behemoth","a":"0000000000000110000","r":null},{"n":"Dodogama","c":"Main, Fanged Wyvern","b":"Dodogama","a":"0000000000000110000","r":31},{"n":"Great Girros","c":"Main, Fanged Wyvern","b":"Great Girros","a":"0000000000000110000","r":201},{"n":"Great Jagras","c":"Main, Fanged Wyvern","b":"Great Jagras","a":"0000000000000110000","r":125},{"n":"Jyuratodus","c":"Main, Piscine Wyvern","b":"Jyuratodus","a":"0000000000000111100","r":195},{"n":"Kulu-Ya-Ku","c":"Main, Bird Wyvern","b":"Kulu-Ya-Ku","a":"0000000000000111100","r":88},{"n":"Kulve Taroth","c":"Main, Elder Dragon","b":"Kulve Taroth","a":"0000000000000110000","r":49},{"n":"Legiana","c":"Main, Flying Wyvern","b":"Legiana","a":"0000000000000110000","r":76},{"n":"Shrieking Legiana","c":"Variant, Flying Wyvern","b":"Legiana","a":"0000000000000010000","r":117},{"n":"Leshen","c":"Main, Relict, Collaboration","b":"Leshen","a":"0000000000000110000","r":null},{"n":"Ancient Leshen","c":"Variant, Relict, Collaboration","b":"Leshen","a":"0000000000000110000","r":null},{"n":"Nergigante","c":"Main, Elder Dragon, Flagship","b":"Nergigante","a":"0000000000000110000","r":2},{"n":"Ruiner Nergigante","c":"Variant, Elder Dragon","b":"Nergigante","a":"0000000000000010000","r":9},{"n":"Odogaron","c":"Main, Fanged Wyvern","b":"Odogaron","a":"0000000000000110000","r":41},{"n":"Ebony Odogaron","c":"Subspecies, Fanged Wyvern","b":"Odogaron","a":"0000000000000010000","r":90},{"n":"Guardian Ebony Odogaron","c":"Variant, Construct","b":"Odogaron","a":"0000000000000000011","r":null},{"n":"Paolumu","c":"Main, Flying Wyvern","b":"Paolumu","a":"0000000000000110000","r":103},{"n":"Nightshade Paolumu","c":"Subspecies, Flying Wyvern","b":"Paolumu","a":"0000000000000010000","r":194},{"n":"Pukei-Pukei","c":"Main, Bird Wyvern","b":"Pukei-Pukei","a":"0000000000000111100","r":64},{"n":"Coral Pukei-Pukei","c":"Subspecies, Bird Wyvern","b":"Pukei-Pukei","a":"0000000000000010000","r":175},{"n":"Radobaan","c":"Main, Brute Wyvern","b":"Radobaan","a":"0000000000000110000","r":174},{"n":"Tobi-Kadachi","c":"Main, Fanged Wyvern","b":"Tobi-Kadachi","a":"0000000000000111100","r":69},{"n":"Viper Tobi-Kadachi","c":"Subspecies, Fanged Wyvern","b":"Tobi-Kadachi","a":"0000000000000010000","r":164},{"n":"Tzitzi-Ya-Ku","c":"Main, Bird Wyvern","b":"Tzitzi-Ya-Ku","a":"0000000000000110000","r":162},{"n":"Vaal Hazak","c":"Main, Elder Dragon","b":"Vaal Hazak","a":"0000000000000110000","r":55},{"n":"Blackveil Vaal Hazak","c":"Variant, Elder Dragon","b":"Vaal Hazak","a":"0000000000000010000","r":105},{"n":"Xeno'jiiva","c":"Main, Elder Dragon","b":"Xeno'jiiva","a":"0000000000000110000","r":43},{"n":"Zorah Magdaros","c":"Main, Elder Dragon","b":"Zorah Magdaros","a":"0000000000000110000","r":148},{"n":"Banbaro","c":"Main, Brute Wyvern","b":"Banbaro","a":"0000000000000010000","r":156},{"n":"Beotodus","c":"Main, Piscine Wyvern","b":"Beotodus","a":"0000000000000010000","r":223},{"n":"Namielle","c":"Main, Elder Dragon","b":"Namielle","a":"0000000000000010000","r":18},{"n":"Safi'jiiva","c":"Main, Elder Dragon","b":"Safi'jiiva","a":"0000000000000010000","r":16},{"n":"Shara Ishvalda","c":"Main, Elder Dragon","b":"Shara Ishvalda","a":"0000000000000010000","r":80},{"n":"Velkhana","c":"Main, Elder Dragon, Flagship","b":"Velkhana","a":"0000000000000010100","r":6},{"n":"Aknosom","c":"Main, Bird Wyvern","b":"Aknosom","a":"0000000000000001100","r":185},{"n":"Almudron","c":"Main, Leviathan","b":"Almudron","a":"0000000000000001100","r":161},{"n":"Magma Almudron","c":"Subspecies, Leviathan","b":"Almudron","a":"0000000000000000100","r":212},{"n":"Bishaten","c":"Main, Fanged Beast","b":"Bishaten","a":"0000000000000001100","r":188},{"n":"Blood Orange Bishaten","c":"Subspecies, Fanged Beast","b":"Bishaten","a":"0000000000000000100","r":217},{"n":"Goss Harag","c":"Main, Fanged Beast","b":"Goss Harag","a":"0000000000000001100","r":93},{"n":"Great Izuchi","c":"Main, Bird Wyvern","b":"Great Izuchi","a":"0000000000000001100","r":201},{"n":"Magnamalo","c":"Main, Fanged Wyvern, Flagship","b":"Magnamalo","a":"0000000000000001100","r":56},{"n":"Scorned Magnamalo","c":"Variant, Fanged Wyvern","b":"Magnamalo","a":"0000000000000000100","r":50},{"n":"Rakna-Kadaki","c":"Main, Temnoceran","b":"Rakna-Kadaki","a":"0000000000000001100","r":152},{"n":"Pyre Rakna-Kadaki","c":"Subspecies, Temnoceran","b":"Rakna-Kadaki","a":"0000000000000000100","r":188},{"n":"Somnacanth","c":"Main, Leviathan","b":"Somnacanth","a":"0000000000000001100","r":197},{"n":"Aurora Somnacanth","c":"Subspecies, Leviathan","b":"Somnacanth","a":"0000000000000000100","r":225},{"n":"Tetranadon","c":"Main, Amphibian","b":"Tetranadon","a":"0000000000000001100","r":142},{"n":"Thunder Serpent Narwa","c":"Main, Elder Dragon","b":"Thunder Serpent Narwa","a":"0000000000000001100","r":210},{"n":"Narwa the Allmother","c":"Variant, Elder Dragon","b":"Thunder Serpent Narwa","a":"0000000000000001100","r":153},{"n":"Wind Serpent Ibushi","c":"Main, Elder Dragon","b":"Wind Serpent Ibushi","a":"0000000000000001100","r":184},{"n":"Espinas","c":"Main, Flying Wyvern","b":"Espinas","a":"0000000000000000100","r":46},{"n":"Flaming Espinas","c":"Subspecies, Flying Wyvern","b":"Espinas","a":"0000000000000000100","r":99},{"n":"Gaismagorm","c":"Main, Elder Dragon","b":"Gaismagorm","a":"0000000000000000100","r":141},{"n":"Garangolm","c":"Main, Fanged Beast","b":"Garangolm","a":"0000000000000000100","r":159},{"n":"Lunagaron","c":"Main, Fanged Wyvern","b":"Lunagaron","a":"0000000000000000100","r":87},{"n":"Malzeno","c":"Main, Elder Dragon, Flagship","b":"Malzeno","a":"0000000000000000100","r":38},{"n":"Primordial Malzeno","c":"Variant, Elder Dragon","b":"Malzeno","a":"0000000000000000100","r":13},{"n":"Ajarakan","c":"Main, Fanged Beast","b":"Ajarakan","a":"0000000000000000011","r":null},{"n":"Arkveld","c":"Main, Flying Wyvern, Flagship","b":"Arkveld","a":"0000000000000000011","r":null},{"n":"Guardian Arkveld","c":"Variant, Construct","b":"Arkveld","a":"0000000000000000011","r":null},{"n":"Balahara","c":"Main, Leviathan","b":"Balahara","a":"0000000000000000011","r":null},{"n":"Chatacabra","c":"Main, Amphibian","b":"Chatacabra","a":"0000000000000000011","r":null},{"n":"Doshaguma","c":"Main, Fanged Beast","b":"Doshaguma","a":"0000000000000000011","r":null},{"n":"Guardian Doshaguma","c":"Variant, Construct","b":"Doshaguma","a":"0000000000000000011","r":null},{"n":"Hirabami","c":"Main, Leviathan","b":"Hirabami","a":"0000000000000000011","r":null},{"n":"Jin Dahaad","c":"Main, Leviathan","b":"Jin Dahaad","a":"0000000000000000011","r":null},{"n":"Lala Barina","c":"Main, Temnoceran","b":"Lala Barina","a":"0000000000000000011","r":null},{"n":"Nu Udra","c":"Main, Cephalopod","b":"Nu Udra","a":"0000000000000000011","r":null},{"n":"Omega Planetes","c":"Main, ???, Collaboration","b":"Omega Planetes","a":"0000000000000000011","r":null},{"n":"Quematrice","c":"Main, Brute Wyvern","b":"Quematrice","a":"0000000000000000011","r":null},{"n":"Rey Dau","c":"Main, Flying Wyvern","b":"Rey Dau","a":"0000000000000000011","r":null},{"n":"Rompopolo","c":"Main, Brute Wyvern","b":"Rompopolo","a":"0000000000000000011","r":null},{"n":"Uth Duna","c":"Main, Leviathan","b":"Uth Duna","a":"0000000000000000011","r":null},{"n":"Xu Wu","c":"Main, Cephalopod","b":"Xu Wu","a":"0000000000000000011","r":null},{"n":"Zoh Shia","c":"Main, Construct","b":"Zoh Shia","a":"0000000000000000011","r":null},{"n":"Araketa","c":"Main, Bird Wyvern","b":"Araketa","a":"0000000000000000001","r":null},{"n":"Gundoraja","c":"Main, Elder Dragon","b":"Gundoraja","a":"0000000000000000001","r":null}]};
+const COLORS = {"Rathalos":"#d8433a","Rathian":"#7f9a3c","Azure Rathalos":"#3f8fe0","Pink Rathian":"#e58bb5","Silver Rathalos":"#c9d3dc","Gold Rathian":"#e8c04a","Dreadking Rathalos":"#5a2b2b","Dreadqueen Rathian":"#4f6a2a","Apex Rathalos":"#c53a5a","Apex Rathian":"#9a4fb8","Guardian Rathalos":"#9fb0b8",
+"Diablos":"#d9c39a","Black Diablos":"#6e5a4a","Bloodbath Diablos":"#a33a2a","Apex Diablos":"#c89a55","Monoblos":"#e2d4b0","White Monoblos":"#f1ece0",
+"Basarios":"#9c8a66","Ruby Basarios":"#c2415a","Gravios":"#7b6c5c","Black Gravios":"#4a4250",
+"Yian Kut-Ku":"#e59a8a","Blue Yian Kut-Ku":"#6aa6d6","Yian Garuga":"#8a5aa8","Scarred Yian Garuga":"#6b4a8a","Deadeye Yian Garuga":"#5a3a6a",
+"Gypceros":"#8a76c8","Purple Gypceros":"#a24fb0","Khezu":"#e9e4e0","Red Khezu":"#d0606a","Plesioth":"#3fae9a","Green Plesioth":"#6fbf5a",
+"Cephadrome":"#d8b878","Velocidrome":"#4f8fd0","Gendrome":"#e2a24a","Iodrome":"#c25a8a","Giadrome":"#a8d8e8","Bulldrome":"#a8784a",
+"Kirin":"#e8eef5","Oroshi Kirin":"#9ad0f0","Lao-Shan Lung":"#8a7f6a","Ashen Lao-Shan Lung":"#b8b2a8","Fatalis":"#2e2a3a","Crimson Fatalis":"#c21f2f","White Fatalis":"#f3f0ff",
+"Kushala Daora":"#9aa6b2","Rusted Kushala Daora":"#b8713a","Risen Kushala Daora":"#c8d0e0","Chameleos":"#9a6ac8","Risen Chameleos":"#d58ae0","Teostra":"#e86a2a","Risen Teostra":"#ff9a3a","Lunastra":"#4a8ae8",
+"Blangonga":"#e8e8f0","Copper Blangonga":"#c87a4a","Congalala":"#e87ab0","Emerald Congalala":"#4fc07a","Daimyo Hermitaur":"#e0653a","Plum Daimyo Hermitaur":"#8a4a9a","Stonefist Hermitaur":"#8a7060","Shogun Ceanataur":"#d8a03a","Terra Shogun Ceanataur":"#6a8a4a","Rustrazor Ceanataur":"#a86a3a",
+"Rajang":"#e8b830","Furious Rajang":"#f0d040","Yama Tsukami":"#c8a8d0","Shen Gaoren":"#8a6a4a","King Shakalaka":"#e8c060","Akantor":"#5a3a3a","Ukanlos":"#c8e0f0","Tigrex":"#e0b040","Brute Tigrex":"#5a5048","Molten Tigrex":"#e04a2a","Grimclaw Tigrex":"#6a3a2a",
+"Nargacuga":"#3a3f55","Green Nargacuga":"#4a8a4a","Lucent Nargacuga":"#b8c8e8","Silverwind Nargacuga":"#c0c8d0","Hypnocatrice":"#e0d0e8","Lavasioth":"#e05a3a","Vespoid Queen":"#e8c040",
+"Lagiacrus":"#3a8ad0","Ivory Lagiacrus":"#f0e8c8","Abyssal Lagiacrus":"#3a3a7a","Royal Ludroth":"#e8a040","Purple Ludroth":"#a050b8","Barroth":"#b0845a","Jade Barroth":"#5ab08a","Gobul":"#5a6a8a","Qurupeco":"#e8a830","Crimson Qurupeco":"#d03a3a","Great Jaggi":"#e07a6a","Great Baggi":"#7ab0d8","Great Wroggi":"#e8a0c0",
+"Barioth":"#c0d8f0","Sand Barioth":"#e0c890","Frostfang Barioth":"#e8f4ff","Gigginox":"#e8e0d8","Baleful Gigginox":"#6a5a9a","Uragaan":"#d0903a","Steel Uragaan":"#8a9aa8","Crystalbeard Uragaan":"#9ad8e8","Agnaktor":"#e0602a","Glacial Agnaktor":"#7ac8e8","Deviljho":"#4f7a4a","Savage Deviljho":"#5a2a4a","Ceadeus":"#5a8ab8","Goldbeard Ceadeus":"#e0b050","Jhen Mohran":"#c8a870","Hallowed Jhen Mohran":"#f0e0b0","Alatreon":"#4a3a8a",
+"Zinogre":"#4ab8e8","Stygian Zinogre":"#9a2a4a","Thunderlord Zinogre":"#f0d040","Apex Zinogre":"#c8f0ff","Arzuros":"#3a6ab0","Redhelm Arzuros":"#c03a3a","Apex Arzuros":"#d05050","Lagombi":"#f0f0f8","Snowbaron Lagombi":"#a8c8e8","Volvidon":"#d0a050","Duramboros":"#7a8a5a","Rust Duramboros":"#b0603a","Nibelsnarf":"#a8a080","Amatsu":"#e8f0f8","Dire Miralis":"#a03030",
+"Brachydios":"#2f6a4a","Raging Brachydios":"#c8e040","Gore Magala":"#3a2a4a","Chaotic Gore Magala":"#7a5a9a","Shagaru Magala":"#e8d090","Risen Shagaru Magala":"#ffd870","Seltas":"#7ab040","Seltas Queen":"#4a8a4a","Desert Seltas":"#d0a050","Desert Seltas Queen":"#b07a3a",
+"Kecha Wacha":"#d87ab0","Ash Kecha Wacha":"#9aa0a8","Tetsucabra":"#e0603a","Berserk Tetsucabra":"#7a6aa8","Drilltusk Tetsucabra":"#8a5a3a","Najarala":"#9aa850","Tidal Najarala":"#3a9ab0","Zamtrios":"#a8d0e8","Tigerstripe Zamtrios":"#e8a040","Nerscylla":"#8a7aa8","Shrouded Nerscylla":"#b8b0c8","Dah'ren Mohran":"#c89a6a","Dalamadur":"#d0703a","Shah Dalamadur":"#ff4a2a","Gogmazios":"#3a3a40","Seregios":"#e8c040",
+"Astalos":"#4a9a5a","Boltreaver Astalos":"#d0c040","Gammoth":"#a8c0d0","Elderfrost Gammoth":"#e0f0ff","Mizutsune":"#e8a8c8","Soulseer Mizutsune":"#a8e0e8","Apex Mizutsune":"#4a7ad0","Violet Mizutsune":"#9a5ad8","Glavenus":"#d0503a","Hellblade Glavenus":"#e8e0d0","Acidic Glavenus":"#7ac0a0","Malfestio":"#8a7ae0","Nightcloak Malfestio":"#4a3a8a","Great Maccao":"#5ac06a","Nakarkos":"#c8c0b0","Larinoth":"#d0a0a0","Ahtal-Ka":"#c8a040","Valstrax":"#d03a3a","Crimson Glow Valstrax":"#ff4a5a","Risen Crimson Glow Valstrax":"#ff7a8a",
+"Great Jagras":"#d0a040","Kulu-Ya-Ku":"#7ab0d0","Pukei-Pukei":"#8ac040","Coral Pukei-Pukei":"#e87a6a","Barroth ":"#b0845a","Jyuratodus":"#a07a4a","Tobi-Kadachi":"#4ab8c0","Viper Tobi-Kadachi":"#5a3a8a","Anjanath":"#c8806a","Fulgur Anjanath":"#e8d040","Guardian Fulgur Anjanath":"#c0b8a0","Rathalos ":"#d8433a","Paolumu":"#f0d8b0","Nightshade Paolumu":"#5a6aa8","Great Girros":"#4a7ab0","Tzitzi-Ya-Ku":"#4ac0a0","Radobaan":"#c8c0b8","Legiana":"#a8e0f0","Shrieking Legiana":"#e0f8ff","Odogaron":"#c8402a","Ebony Odogaron":"#3a3040","Guardian Ebony Odogaron":"#7a7080","Dodogama":"#e0805a","Bazelgeuse":"#c87a4a","Seething Bazelgeuse":"#ff6a2a","Vaal Hazak":"#b8a890","Blackveil Vaal Hazak":"#4a3a40","Nergigante":"#5a5a6a","Ruiner Nergigante":"#d0d8e0","Zorah Magdaros":"#e0602a","Xeno'jiiva":"#a8e8f0","Kulve Taroth":"#e8c040","Behemoth":"#7a4a8a","Leshen":"#6a8a5a","Ancient Leshen":"#4a6a4a",
+"Banbaro":"#a8805a","Beotodus":"#8ab0c8","Velkhana":"#9ad8f8","Namielle":"#3a8ae0","Shara Ishvalda":"#b8a8a0","Safi'jiiva":"#e0402a",
+"Aknosom":"#e8a050","Tetranadon":"#6aa060","Great Izuchi":"#c8d0d8","Bishaten":"#e08a3a","Blood Orange Bishaten":"#e0503a","Somnacanth":"#e090c0","Aurora Somnacanth":"#9ad8f0","Almudron":"#d0b050","Magma Almudron":"#e0603a","Rakna-Kadaki":"#f0f0f0","Pyre Rakna-Kadaki":"#ff7a3a","Goss Harag":"#8ab0d0","Magnamalo":"#8a4ab0","Scorned Magnamalo":"#4a8ad0","Wind Serpent Ibushi":"#8ad0b0","Thunder Serpent Narwa":"#6a6ad8","Narwa the Allmother":"#d8a0e0",
+"Lunagaron":"#7a8ab8","Garangolm":"#6a7a5a","Malzeno":"#c0c8d8","Primordial Malzeno":"#e03a5a","Gaismagorm":"#4a3020","Espinas":"#4a8a3a","Flaming Espinas":"#e05a3a",
+"Chatacabra":"#d0b060","Quematrice":"#e07a3a","Lala Barina":"#d83a5a","Balahara":"#c8b890","Doshaguma":"#a8603a","Guardian Doshaguma":"#c8b8a8","Uth Duna":"#6ab0e0","Rompopolo":"#9a6ac8","Rey Dau":"#f0d040","Nu Udra":"#4a3a4a","Hirabami":"#a8d0e8","Ajarakan":"#e8803a","Jin Dahaad":"#c0e0f0","Xu Wu":"#e8d0d8","Arkveld":"#8a8aa0","Guardian Arkveld":"#d0c8c0","Zoh Shia":"#f0f0f8","Omega Planetes":"#c8d0e8","Araketa":"#d0904a","Gundoraja":"#8a5a3a","Rathian Variant (unnamed)":"#b8a050"}
+;
+const SHORT = {MH1:"MH",MHG:"MHG",MHF1:"MHF",MH2:"MH2",MHF2:"MHF2",MHFU:"MHFU",MH3:"Tri",MHP3:"P3rd",MH3U:"MH3U",MH4:"MH4",MH4U:"MH4U",MHGen:"Gen",MHGU:"GU",MHWorld:"World",MHWI:"IB",MHRise:"Rise",MHRS:"SB",MHWilds:"Wilds",MHWA:"Asc."};
+const GENC = ["","var(--g1)","var(--g2)","var(--g3)","var(--g4)","var(--g5)","var(--g6)"];
+const GENHEX = ["","#b9784a","#a8a24a","#4f9a8a","#5a7fc8","#9a68c0","#d0606e"];
+// Signature colour per title (cover monster, logo or branding); generations stay neutral
+const TCOL = {MH1:"#D4552B",MHG:"#3F7FD0",MHF1:"#D8BF8C",MH2:"#7C8FA6",MHF2:"#E0952C",MHFU:"#4FAE3E",MH3:"#1E6FA6",MHP3:"#E86F2C",MH3U:"#B6CC36",MH4:"#6650A8",MH4U:"#E6C23E",MHGen:"#D23F6A",MHGU:"#C9C3B8",MHWorld:"#2F9E6E",MHWI:"#BDE6F7",MHRise:"#A84BB8",MHRS:"#C0273D",MHWilds:"#CAA24A",MHWA:"#7F9BF7"};
+const TGRAD = {MHWA:"linear-gradient(90deg,#7F9BF7,#FA4F6B)"};
+const tc = g => TCOL[g.k] || `hsl(${hash(g.t)%360} 55% 60%)`;
+const tbg = g => TGRAD[g.k] || tc(g);
+const ttext = g => TGRAD[g.k] ? `background:${TGRAD[g.k]};-webkit-background-clip:text;background-clip:text;color:transparent` : `color:${tc(g)}`;
+const BASE_CATS = ["Main","Subspecies","Rare Species","Variant","Deviant"];
+const CLASS_ORDER = ["Elder Dragon","Flying Wyvern","Brute Wyvern","Fanged Wyvern","Bird Wyvern","Piscine Wyvern","Snake Wyvern","Leviathan","Fanged Beast","Amphibian","Carapaceon","Neopteran","Temnoceran","Cephalopod","Construct","Relict","Lynian","Herbivore","???"];
+const OTHER_TAGS = ["Flagship","Collaboration"];
+const ELEMENTS = ["Fire","Water","Thunder","Ice","Dragon","No element"];
+// Element column: comma list of elements, "None"/empty = non-elemental
+function elemTags(v){ if(v==null) return []; const a=String(v).split(/\s*[,;\/|+&]\s*/).map(x=>x.trim()).filter(Boolean).filter(x=>!/^(none|-|—)$/i.test(x)); return a.length?a:["No element"]; }
+const ELEM0 = {"Basarios": "Fire", "Ruby Basarios": "Fire", "Cephadrome": "Water", "Diablos": "None", "Black Diablos": "None", "Apex Diablos": "None", "Bloodbath Diablos": "None", "Fatalis": "Fire, Dragon", "Crimson Fatalis": "Fire, Dragon", "White Fatalis": "Thunder, Dragon", "Gendrome": "None", "Gravios": "Fire", "Black Gravios": "Fire", "Gypceros": "None", "Purple Gypceros": "None", "Iodrome": "None", "Khezu": "Thunder", "Red Khezu": "Thunder", "Kirin": "Thunder", "Oroshi Kirin": "Ice", "Lao-Shan Lung": "Dragon", "Ashen Lao-Shan Lung": "Dragon", "Monoblos": "None", "White Monoblos": "None", "Plesioth": "Water", "Green Plesioth": "Water", "Rathalos": "Fire, Dragon", "Azure Rathalos": "Fire, Dragon", "Silver Rathalos": "Fire, Dragon", "Apex Rathalos": "Fire", "Guardian Rathalos": "Fire", "Dreadking Rathalos": "Fire", "Rathian": "Fire", "Pink Rathian": "Fire", "Gold Rathian": "Fire", "Apex Rathian": "Fire", "Rathian Variant (unnamed)": "Fire", "Dreadqueen Rathian": "Fire", "Velocidrome": "None", "Yian Kut-Ku": "Fire", "Blue Yian Kut-Ku": "Fire", "Yian Garuga": "Fire", "Scarred Yian Garuga": "Fire", "Deadeye Yian Garuga": "Fire", "Blangonga": "Ice", "Copper Blangonga": "None", "Bulldrome": "None", "Chameleos": "Dragon", "Risen Chameleos": "Dragon", "Congalala": "Fire", "Emerald Congalala": "Fire", "Daimyo Hermitaur": "Water", "Plum Daimyo Hermitaur": "Water", "Stonefist Hermitaur": "Water", "King Shakalaka": "Fire", "Kushala Daora": "Ice, Dragon", "Rusted Kushala Daora": "Ice, Dragon", "Risen Kushala Daora": "Ice, Dragon", "Lunastra": "Fire, Dragon", "Rajang": "Thunder", "Furious Rajang": "Thunder", "Shen Gaoren": "None", "Shogun Ceanataur": "Water", "Terra Shogun Ceanataur": "Water", "Rustrazor Ceanataur": "Water", "Teostra": "Fire, Dragon", "Risen Teostra": "Fire", "Yama Tsukami": "Fire", "Akantor": "Fire, Dragon", "Giadrome": "Ice", "Tigrex": "Fire, Water, Ice, Dragon", "Brute Tigrex": "Fire, Water", "Molten Tigrex": "None", "Grimclaw Tigrex": "Water, Ice", "Hypnocatrice": "None", "Lavasioth": "Fire", "Nargacuga": "None", "Green Nargacuga": "None", "Lucent Nargacuga": "None", "Silverwind Nargacuga": "None", "Ukanlos": "Ice", "Vespoid Queen": "None", "Agnaktor": "Fire", "Glacial Agnaktor": "Water, Ice", "Alatreon": "Fire, Water, Thunder, Ice, Dragon", "Barioth": "Ice", "Sand Barioth": "None", "Frostfang Barioth": "Ice", "Barroth": "Water", "Jade Barroth": "Ice", "Ceadeus": "Water, Dragon", "Goldbeard Ceadeus": "Water", "Deviljho": "Dragon", "Savage Deviljho": "Dragon", "Gigginox": "None", "Baleful Gigginox": "Thunder", "Gobul": "Water", "Great Baggi": "None", "Great Jaggi": "None", "Jhen Mohran": "Dragon", "Hallowed Jhen Mohran": "None", "Lagiacrus": "Water, Thunder", "Abyssal Lagiacrus": "Water, Thunder", "Ivory Lagiacrus": "Water, Thunder", "Qurupeco": "Fire", "Crimson Qurupeco": "Thunder", "Royal Ludroth": "Water", "Purple Ludroth": "None", "Uragaan": "Fire", "Steel Uragaan": "Fire", "Crystalbeard Uragaan": "Fire", "Amatsu": "Water, Thunder, Dragon", "Arzuros": "None", "Apex Arzuros": "None", "Redhelm Arzuros": "None", "Duramboros": "None", "Rust Duramboros": "None", "Great Wroggi": "None", "Lagombi": "Ice", "Snowbaron Lagombi": "Ice", "Nibelsnarf": "Water", "Volvidon": "None", "Zinogre": "Thunder", "Stygian Zinogre": "Dragon", "Apex Zinogre": "Thunder", "Thunderlord Zinogre": "Thunder", "Brachydios": "Fire", "Raging Brachydios": "Fire", "Dire Miralis": "Fire", "Dah'ren Mohran": "None", "Dalamadur": "None", "Shah Dalamadur": "None", "Gore Magala": "None", "Chaotic Gore Magala": "None", "Kecha Wacha": "Water", "Ash Kecha Wacha": "Fire", "Najarala": "None", "Tidal Najarala": "Water", "Nerscylla": "None", "Shrouded Nerscylla": "None", "Seltas": "None", "Desert Seltas": "None", "Seltas Queen": "Water", "Desert Seltas Queen": "Water", "Shagaru Magala": "None", "Risen Shagaru Magala": "None", "Tetsucabra": "None", "Berserk Tetsucabra": "None", "Drilltusk Tetsucabra": "None", "Zamtrios": "Ice", "Tigerstripe Zamtrios": "Water", "Gogmazios": "Fire", "Seregios": "None", "Astalos": "Thunder", "Boltreaver Astalos": "Thunder", "Gammoth": "Ice", "Elderfrost Gammoth": "Ice", "Glavenus": "Fire", "Acidic Glavenus": "None", "Hellblade Glavenus": "Fire", "Great Maccao": "None", "Larinoth": "None", "Malfestio": "None", "Nightcloak Malfestio": "None", "Mizutsune": "Fire, Water", "Violet Mizutsune": "Fire", "Apex Mizutsune": "Fire, Water", "Soulseer Mizutsune": "Fire, Water", "Nakarkos": "Fire, Thunder, Dragon", "Ahtal-Ka": "None", "Valstrax": "Dragon", "Crimson Glow Valstrax": "Dragon", "Risen Crimson Glow Valstrax": "Dragon", "Ancient Leshen": "None", "Anjanath": "Fire", "Fulgur Anjanath": "Thunder", "Guardian Fulgur Anjanath": "Thunder", "Bazelgeuse": "Fire", "Seething Bazelgeuse": "Fire", "Behemoth": "Fire, Thunder", "Dodogama": "Fire", "Great Girros": "None", "Great Jagras": "None", "Jyuratodus": "Water", "Kulu-Ya-Ku": "Fire", "Kulve Taroth": "Fire", "Legiana": "Ice", "Shrieking Legiana": "Ice", "Leshen": "None", "Nergigante": "None", "Ruiner Nergigante": "None", "Odogaron": "None", "Ebony Odogaron": "Dragon", "Guardian Ebony Odogaron": "Dragon", "Paolumu": "None", "Nightshade Paolumu": "None", "Pukei-Pukei": "None", "Coral Pukei-Pukei": "Water", "Radobaan": "None", "Tobi-Kadachi": "Thunder", "Viper Tobi-Kadachi": "None", "Tzitzi-Ya-Ku": "None", "Vaal Hazak": "None", "Blackveil Vaal Hazak": "None", "Xeno'jiiva": "Fire, Dragon", "Zorah Magdaros": "Fire", "Banbaro": "Fire, Water, Ice", "Beotodus": "Ice", "Namielle": "Water, Thunder", "Safi'jiiva": "Fire", "Shara Ishvalda": "None", "Velkhana": "Ice", "Aknosom": "Fire", "Almudron": "Water", "Magma Almudron": "Fire", "Bishaten": "None", "Blood Orange Bishaten": "Fire", "Goss Harag": "Ice", "Great Izuchi": "None", "Magnamalo": "None", "Scorned Magnamalo": "Dragon", "Rakna-Kadaki": "Fire", "Pyre Rakna-Kadaki": "Fire", "Somnacanth": "Water", "Aurora Somnacanth": "Ice", "Tetranadon": "Water", "Thunder Serpent Narwa": "Thunder, Dragon", "Narwa the Allmother": "Thunder, Dragon", "Wind Serpent Ibushi": "Dragon", "Espinas": "Fire", "Flaming Espinas": "Fire", "Gaismagorm": "Fire", "Garangolm": "Fire, Water, Ice", "Lunagaron": "Ice", "Malzeno": "Dragon", "Primordial Malzeno": "Dragon", "Ajarakan": "Fire", "Arkveld": "Dragon", "Guardian Arkveld": "Dragon", "Balahara": "Water", "Chatacabra": "None", "Doshaguma": "None", "Guardian Doshaguma": "None", "Hirabami": "Ice", "Jin Dahaad": "Ice", "Lala Barina": "None", "Nu Udra": "Fire", "Omega Planetes": "Fire, Ice", "Quematrice": "Fire", "Rey Dau": "Thunder", "Rompopolo": "None", "Uth Duna": "Water", "Xu Wu": "None", "Zoh Shia": "Fire, Thunder", "Araketa": "None", "Gundoraja": "None"};
+let CATS = [...BASE_CATS], CLASSES = [], OTHERS = [], ELEMS = [];
+// Rebuild the chip groups from the tags present in the data; tags never seen before start switched on.
+function syncTags(){
+  const all=[...new Set(M.flatMap(m=>m.tags))];
+  CATS=BASE_CATS.filter(x=>all.includes(x)).concat(all.filter(x=>!BASE_CATS.includes(x)&&!CLASS_ORDER.includes(x)&&!OTHER_TAGS.includes(x)&&FORMS.includes(x)));
+  const elSet=new Set(M.flatMap(m=>m.els));
+  CLASSES=CLASS_ORDER.filter(x=>all.includes(x)).concat(all.filter(x=>!BASE_CATS.includes(x)&&!CLASS_ORDER.includes(x)&&!OTHER_TAGS.includes(x)&&!elSet.has(x)));
+  OTHERS=OTHER_TAGS.filter(x=>all.includes(x));
+  ELEMS=ELEMENTS.filter(x=>all.includes(x)).concat([...new Set(M.flatMap(m=>m.els))].filter(x=>!ELEMENTS.includes(x)));
+  if(typeof S!=="undefined"){ all.forEach(x=>{if(!S.seen.includes(x)){S.seen.push(x);S.cats.add(x)}}) }
+}
+const TODAY = 2026 + 9.2/12;
+
+const SHEET_ID = "100WOfPyMaWnZAIpCVzma3zqdj6VW_b2RW8-PuoEUobo";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/edit";
+const KNOWN = Object.fromEntries(DATA.games.map(g=>[g.t.toLowerCase(),g]));
+const BASEOF = Object.fromEntries(DATA.mons.map(m=>[m.n,m.b]));
+function parseDate(d){
+  d=String(d||"").trim(); let m;
+  if((m=d.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/))) return {y:+m[1]+(+m[2]-1)/12, year:m[1], d};
+  if((m=d.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/))) return {y:+m[3]+(+m[2]-1)/12, year:m[3], d:`${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`};
+  if((m=d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/))) return {y:+m[3]+(+m[1]-1)/12, year:m[3], d:`${m[3]}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`};
+  if((m=d.match(/(\d{4})/))) return {y:+m[1]+.5, year:m[1], d};
+  return {y:2030, year:"TBA", d:d||"TBA"};
+}
+function abbr(t){return t.replace(/Monster Hunter:?/i,"").trim().split(/\s+/).map(w=>w[0]).join("").slice(0,5)||"MH"}
+let G=[], M=[], byName={}, TXT={}, RMAX=229;
+// Fan rank → 1–10 rating, IMDb style: #1 = 10.0, last place = 1.0
+const rating=r=>r?10-9*(r-1)/(RMAX-1):null;
+const avgRating=list=>{const l=list.filter(m=>m.r);return l.length?{avg:l.reduce((s,m)=>s+rating(m.r),0)/l.length,rk:l.reduce((s,m)=>s+m.r,0)/l.length,n:l.length}:null};
+// Fan display follows the "Fan" switch: ★ rating (1–10) or # rank
+const fanTxt=m=>!m.r?"–":S.fan==="rank"?`#${m.r}`:`★ ${fmtR(rating(m.r))}`;
+const avgTxt=a=>!a?"–":S.fan==="rank"?`Ø #${Math.round(a.rk)}`:`★ ${fmtR(a.avg)}`;
+// Hype = years away × fan rating: a long break only scores big if fans missed the monster
+const hype=(years,m)=>m.r?years*rating(m.r):0;
+const fmtR=x=>x==null?"–":x.toFixed(1);
+const FORMS=["Main","Subspecies","Rare Species","Variant","Deviant"];
+function splitTags(c){const a=String(c||"").split(/\s*[,;\/|+&]\s*/).map(x=>x.trim()).filter(Boolean);return a.length?a:["Main"]}
+const tagsHtml=m=>m.tags.map(x=>`<span class="cat">${esc(x)}</span>`).join("");
+// A monster is shown as soon as any one of its tags is switched on.
+const shown=m=>m.tags.some(x=>S.cats.has(x));
+function setData(games, mons){
+  G = games.map((g,i)=>{const p=parseDate(g.d); return {...g,i,y:p.y,year:p.year,d:p.d,s:SHORT[g.k]||abbr(g.t)}});
+  M = mons.map(m=>{const els=elemTags(m.e!=null?m.e:ELEM0[m.n]), tags=[...splitTags(m.c),...els];return {...m,r:m.r??null,tags,els,c:tags.find(x=>FORMS.includes(x))||tags[0]||"Main",b:m.b||BASEOF[m.n]||m.n,flags:[...m.a].map(x=>x==="1")}});
+  byName = Object.fromEntries(M.map(m=>[m.n,m]));
+  TXT = {}; M.forEach(m=>TXT[m.n]=readable(col(m)));
+  RMAX = Math.max(2,...M.map(m=>m.r||0));
+  const ks=new Set(G.map(g=>g.k)); G.forEach(g=>{if(g.x&&!ks.has(g.x))g.x=null});
+}
+const GRANK_RE=/(\bG$|Unite|Ultimate|Iceborne|Sunbreak|Ascendance)/i;
+function isG(g){return !!g.x||(!KNOWN[g.t.toLowerCase()]&&GRANK_RE.test(g.t))}
+const gst=g=>isG(g)?'<span class="gstar" title="G-rank expansion">G★</span>':"";
+// Parse the sheet as laid out: a row with "Monster" in column A holds the titles,
+// the generation row sits above it, label rows (release, totals…) follow, then monster rows.
+const TRUTHY=/^(true|wahr|yes|ja|x|1|✓|✔)$/i;
+function fromSheet(values){
+  const rows=(values||[]).map(r=>r.map(c=>String(c??"").trim()));
+  const hi=rows.findIndex(r=>/^monster$/i.test(r[0]||""));
+  if(hi<0) throw new Error("No row with “Monster” in column A was found.");
+  const head=rows[hi]; const data=rows.slice(hi+1);
+  const BOOL=/^(true|false|wahr|falsch)$/i;
+  const cols=[]; let rankCol=-1, elemCol=-1;
+  for(let c=1;c<head.length;c++){ if(!head[c]) continue;
+    const vals=data.map(r=>r[c]||"").filter(Boolean);
+    if(vals.some(v=>BOOL.test(v))) cols.push(c);
+    else if(elemCol<0&&/element/i.test(head[c])) elemCol=c;
+    else if(rankCol<0&&(/rank|fav|choice|vote/i.test(head[c])||(vals.length&&vals.filter(v=>/^#?\d+$/.test(v)).length>vals.length*.6&&c>1))) rankCol=c; }
+  if(!cols.length) throw new Error("No title columns were found next to “Monster”.");
+  const genRow=rows.slice(0,hi).reverse().find(r=>cols.some(c=>/gen/i.test(r[c]||"")))||[];
+  const relRow=rows.find(r=>/^release/i.test(r[0]||""))||[];
+  let lastGen=1;
+  const games=cols.map(c=>{const t=head[c]; const known=KNOWN[t.toLowerCase()];
+    const gm=(genRow[c]||"").match(/(\d+)/); if(gm) lastGen=+gm[1];
+    return {k:known?known.k:t, t, g:gm?+gm[1]:(known?known.g:lastGen), d:relRow[c]||(known?known.d:""), x:known?known.x:null}});
+  const mons=[];
+  for(let r=hi+1;r<rows.length;r++){const row=rows[r]; const n=row[0], c=row[1];
+    if(!n||!c) continue;
+    if(/^(release|total|new monsters|debut monsters)/i.test(n)) continue;
+    const a=cols.map(ci=>TRUTHY.test(row[ci]||"")?"1":"0").join("");
+    if(!a.includes("1")) continue;
+    const rv=rankCol>=0?parseInt(String(row[rankCol]||"").replace(/[^0-9]/g,""),10):NaN;
+    mons.push({n,c,a,r:Number.isFinite(rv)?rv:null,e:elemCol>=0?(row[elemCol]||""):null});
+  }
+  if(!mons.length) throw new Error("No monster rows with at least one ticked title were found.");
+  return {games,mons};
+}
+setData(DATA.games, DATA.mons);
+
+// colour helpers
+function hash(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
+function col(m){ if(COLORS[m.n]) return COLORS[m.n]; if(COLORS[m.b]) return COLORS[m.b]; return `hsl(${hash(m.n)%360} 55% 60%)`}
+function rgb(hex){if(!hex.startsWith("#"))return [180,180,180];const n=parseInt(hex.slice(1),16);return [n>>16&255,n>>8&255,n&255]}
+function lum([r,g,b]){const f=v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4};return .2126*f(r)+.7152*f(g)+.0722*f(b)}
+function readable(hex){ if(!hex.startsWith("#"))return hex; let c=rgb(hex),t=0; while(lum(c)<.18&&t<12){c=c.map(v=>Math.round(v+(255-v)*.15));t++} return `rgb(${c.join(",")})`}
+
+// state
+const S = {cats:new Set(CATS), unit:"t", wa:true, tab:"tt", sel:"Rathalos", title:"MHWilds", q:"", mxSort:"debut", mxGroup:true, more:{}, trait:{}, fam:"s", seen:[], tt:null, ttSort:"long", ttDebFirst:true, ttRate:false, fan:"rate", gx:"apps", tinfo:"rel", fanDeb:"g", fanTop:25, hl:null, lay:(window.innerWidth||1000)<760?"m":"d"};
+try{const saved=JSON.parse(localStorage.getItem("hl-state-5")||"null"); if(saved){S.cats=new Set(saved.cats);S.seen=saved.seen||[...S.cats];S.trait=saved.trait||{};S.unit=saved.unit;S.fam=saved.fam||"s";if(saved.lay)S.lay=saved.lay;S.wa=saved.wa;S.sel=saved.sel||S.sel;S.tinfo=saved.tinfo||"rel";S.fan=saved.fan||"rate";S.fanDeb=saved.fanDeb||"g"}}catch(e){}
+syncTags();
+function save(){try{localStorage.setItem("hl-state-5",JSON.stringify({cats:[...S.cats],seen:S.seen,tinfo:S.tinfo,fan:S.fan,fanDeb:S.fanDeb,trait:S.trait,unit:S.unit,fam:S.fam,lay:S.lay,wa:S.wa,tab:S.tab,sel:S.sel}))}catch(e){}}
+
+function games(){return S.wa?G:G.filter(g=>g.k!=="MHWA")}
+function mons(){return M.filter(m=>shown(m)&&(S.fam!=="f"||m.b===m.n)&&games().some(g=>m.flags[g.i]))}
+function apps(m){return games().filter(g=>m.flags[g.i])}
+function gens(m){return [...new Set(apps(m).map(g=>g.g))]}
+function score(m){return S.unit==="t"?apps(m).length:gens(m).length}
+const newestReleased = () => [...G].filter(g=>g.k!=="MHWA").pop();
+
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nm=(m,extra="")=>`<span class="mname" data-m="${esc(m.n)}" style="color:${TXT[m.n]}" ${extra}>${esc(m.n)}</span>`;
+
+// facts + ribbon
+function renderHero(){
+  const ms=mons(), gs=games();
+  const top=[...ms].sort((a,b)=>score(b)-score(a))[0];
+  const firstYear=gs[0].year, lastYear=gs[gs.length-1].year;
+  document.getElementById("facts").innerHTML=[
+    [ms.length,"large monsters"],[gs.length,"titles"],[new Set(gs.map(g=>g.g)).size,"generations"],
+    [top?score(top):0,`appearances by ${top?top.n:"–"}`]
+  ].map(([v,l])=>`<div class="fact"><b>${v}</b><span class="muted">${esc(l)}</span></div>`).join("");
+  const rb=document.getElementById("ribbon"); rb.style.setProperty("--n",gs.length);
+  const deb=debutMap();
+  rb.innerHTML=gs.map(g=>{const tot=ms.filter(m=>m.flags[g.i]).length, d=ms.filter(m=>deb[m.n]===g.i).length;
+    return `<div data-g="${g.k}" style="background:${tbg(g)}" title="${esc(g.t)}${isG(g)?" (G-rank)":""} · ${g.year} · ${tot} monsters, ${d} debuts">${isG(g)?"<b>G★</b>":""}<i style="height:${tot?Math.round(d/tot*100):0}%"></i></div>`}).join("");
+}
+function debutMap(){const d={};M.forEach(m=>{const a=games().find(g=>m.flags[g.i]);d[m.n]=a?a.i:-1});return d}
+
+// filter bar
+function renderBar(){
+  const allT=[...CATS,...ELEMS,...CLASSES,...OTHERS], on=allT.filter(x=>S.cats.has(x));
+  const summary=on.length===allT.length?"All tags":on.length===0?"No tags":on.length<=2?on.join(", "):`${on.length} of ${allT.length} tags`;
+  const row=c=>`<button type="button" class="ddrow" data-c="${esc(c)}" aria-pressed="${S.cats.has(c)}"><span class="box"></span>${esc(c)}<small>${M.filter(m=>m.tags.includes(c)).length}</small></button>`;
+  const grp=(label,list,wide)=>list.length?`<div class="ddgrp"><div class="label">${label}</div><div class="ddrows ${wide?"two":""}">${list.map(row).join("")}</div></div>`:"";
+  document.getElementById("catChips").innerHTML=`<button type="button" class="ddbtn" id="tagBtn" aria-expanded="${!!S.tagOpen}" aria-controls="tagPanel"><span class="label">Tags</span><span>${esc(summary)}</span><span class="car">▾</span></button>
+    <div class="ddpanel" id="tagPanel" ${S.tagOpen?"":"hidden"}>
+      <div class="ddtop"><button type="button" class="chip" data-call="1">All</button><button type="button" class="chip" data-call="0">None</button><button type="button" class="btn" data-tagclose="1" style="margin-left:auto">Done</button></div>
+      ${grp("Form",CATS)}${grp("Element",ELEMS,true)}${grp("Class",CLASSES,true)}${grp("Other",OTHERS)}
+    </div>`;
+  document.querySelectorAll("#unitSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.u===S.unit));
+  document.querySelectorAll("#fanSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.fan===S.fan));
+  document.querySelectorAll("#famSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.f===S.fam));
+  document.getElementById("waToggle").setAttribute("aria-pressed",S.wa);
+  document.getElementById("count").textContent=`${mons().length} of ${M.length} monsters shown`;
+  if(SRC) renderSrc();
+}
+
+// ---------- Bestiary ----------
+function renderBest(){
+  const ms=mons(); if(!ms.find(m=>m.n===S.sel)) S.sel=(ms[0]||M[0]).n;
+  const q=S.q.toLowerCase();
+  const list=ms.filter(m=>!q||m.n.toLowerCase().includes(q));
+  const items=list.map(m=>`<li data-m="${esc(m.n)}" class="${m.n===S.sel?"on":""} ${m.c!=="Main"&&!q?"sub":""}"><span style="color:${TXT[m.n]}">${esc(m.n)}</span><small>${score(m)}</small></li>`).join("");
+  if(S.lay==="m"){
+    const idx=list.findIndex(m=>m.n===S.sel);
+    return `<div class="mpick"><input id="q" type="search" placeholder="Search" value="${esc(S.q)}" aria-label="Search monsters">
+      <select id="msel" aria-label="Monster">${list.map(m=>`<option value="${esc(m.n)}" ${m.n===S.sel?"selected":""}>${esc(m.n)}</option>`).join("")||"<option>No match</option>"}</select>
+      <button type="button" class="btn" data-step="-1" aria-label="Previous monster" ${idx<=0?"disabled":""}>‹</button><button type="button" class="btn" data-step="1" aria-label="Next monster" ${idx<0||idx>=list.length-1?"disabled":""}>›</button><button type="button" class="btn" id="rand" aria-label="Random monster">⚄</button></div>
+      <section class="profile" id="profile">${profile(byName[S.sel])}</section>`;
+  }
+  return `<div class="best">
+    <aside class="list"><div class="search"><input id="q" type="search" placeholder="Search ${ms.length} monsters" value="${esc(S.q)}" aria-label="Search monsters">
+      <button type="button" class="btn" id="rand">Random hunt</button></div><ul id="mlist">${items||'<li class="muted">No monster matches.</li>'}</ul></aside>
+    <section class="profile" id="profile">${profile(byName[S.sel])}</section></div>`;
+}
+function profile(m){
+  const gs=games(), a=apps(m), c=col(m);
+  const first=a[0], last=a[a.length-1];
+  // longest absence
+  let gap=null; for(let i=1;i<a.length;i++){const y=a[i].y-a[i-1].y, skipped=a[i].i-a[i-1].i-1; if(!gap||y>gap.y)gap={y,from:a[i-1],to:a[i],skipped}}
+  // an absence that is still running (not in the newest title, not confirmed for an upcoming one) counts up to today
+  const lastA=a[a.length-1], nrel=newestReleased();
+  if(lastA.k!=="MHWA"&&lastA!==nrel){const y=Math.max(0,TODAY-lastA.y); if(!gap||y>gap.y) gap={y,from:lastA,to:null,skipped:1}}
+  const nr=newestReleased(); const since = last.k==="MHWA"?null:Math.max(0,TODAY-last.y);
+  const fam=M.filter(x=>x.b===m.b&&x.n!==m.n&&shown(x));
+  const base=byName[m.b];
+  const gset=gens(m);
+  const rank=[...mons()].sort((x,y)=>score(y)-score(x)).findIndex(x=>x.n===m.n)+1;
+  let cells="", hdr="";
+  gs.forEach((g,i)=>{const on=m.flags[g.i]; const prevGen=i>0?gs[i-1].g:0;
+    hdr+=`<div class="gen" style="background:${g.g!==prevGen?"var(--ink-3)":"transparent"};color:${g.g!==prevGen?"var(--bone-2)":"transparent"}">${g.g!==prevGen?"Gen "+g.g:"."}</div>`;
+    cells+=`<div class="cell ${on?"on":""} ${on&&g===first?"debut":""}" style="${on?`background:${c}`:""}" title="${esc(g.t)}${isG(g)?" · G-rank":""} (${g.year})${on?"":" – absent"}">${gst(g)}<span class="ab">${g.s}</span></div>`});
+  const status = last.k==="MHWA" ? "Confirmed for Ascendance" : last===nr ? "In the newest title" : `${since.toFixed(1)} years`;
+  return `<div class="ph"><div class="glow" style="background:${c}"></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">${tagsHtml(m)}${m.c!=="Main"&&base?`<span class="muted" style="font-size:14px">form of ${nm(base)}</span>`:""}</div>
+      <h2 style="color:${TXT[m.n]}">${esc(m.n)}</h2>
+      <p class="note">${blurb(m,a,gset,gap,rank)}</p></div>
+    <div class="stats">
+      <div class="stat" style="border-color:${c}"><b>${a.length}<span class="muted" style="font-size:16px"> / ${gs.length}</span></b><span>titles</span></div>
+      <div class="stat" style="border-color:${c}"><b>${gset.length}<span class="muted" style="font-size:16px"> / ${new Set(gs.map(g=>g.g)).size}</span></b><span>generations</span></div>
+      <div class="stat"><b>${first.year}</b><span>debut in ${esc(first.t)}</span></div>
+      <div class="stat"><b>${last.year}</b><span>last seen in ${esc(last.t)}</span></div>
+      <div class="stat"><b>${status.includes("years")?status.split(" ")[0]:"–"}</b><span>${status.includes("years")?"years since last hunt":status}</span></div>
+      <div class="stat"><b>${gap?gap.y.toFixed(1):"–"}</b><span>${gap?`longest absence (${gap.from.s} → ${gap.to?gap.to.s:"today"})${gap.to?"":" · still waiting"}`:"never left after its debut"}</span></div>
+      <div class="stat"><b>#${rank}</b><span>by ${S.unit==="t"?"titles":"generations"} in current filter</span></div>
+      <div class="stat" style="border-color:var(--brass)"><b>${fanTxt(m)}</b><span>${m.r?(S.fan==="rank"?"fan vote rank":"fan rating (1–10)"):"not in the fan vote"}</span></div>
+    </div>
+    <div><div class="label" style="margin-bottom:8px">Appearances · ★ debut</div>
+      <div class="tl"><div class="tlg" style="--n:${gs.length}">${hdr}${cells}</div></div></div>
+    ${fam.length?`<div><div class="label" style="margin-bottom:8px">Family · ${fam.length+1} forms</div><div class="fam">${[m.b===m.n?null:base,...fam].filter(Boolean).filter(x=>x.n!==m.n).map(x=>`<div class="famcard" data-m="${esc(x.n)}"><span class="sw" style="background:${col(x)}"></span><span style="color:${TXT[x.n]}">${esc(x.n)}</span>${tagsHtml(x)}</div>`).join("")}</div></div>`:""}`;
+}
+function blurb(m,a,gset,gap,rank){
+  const n=a.length, gs=games();
+  if(n===1) return `A one-title appearance so far: ${esc(m.n)} has only been hunted in ${esc(a[0].t)}.`;
+  const allGens=new Set(gs.map(g=>g.g)).size;
+  let s=`Appears in ${n} of ${gs.length} titles across ${gset.length} generation${gset.length>1?"s":""}.`;
+  if(gset.length===allGens) s+=` One of the few monsters present in every generation.`;
+  if(gap&&!gap.to&&gap.y>=4) s+=` It has been missing since ${esc(gap.from.t)}, ${gap.y.toFixed(0)} years and counting.`;
+  else if(gap&&gap.to&&gap.y>=8) s+=` Its return in ${esc(gap.to.t)} ended a ${gap.y.toFixed(0)}-year absence.`;
+  else if(gap&&gap.skipped===0) s+=` It never skipped a title after its debut.`;
+  return s;
+}
+
+// ---------- Rankings ----------
+function board(id,title,desc,arr,valFn,maxV,limit=12,ctl=""){
+  if(S.lay==="m") limit=Math.min(limit,6);
+  const shown=S.more[id]?arr:arr.slice(0,limit);
+  const rows=shown.map((m,i)=>{const v=valFn(m);return `<div class="row"><span class="rk">${i+1}</span><div class="bartrack"><div class="barfill" style="width:${Math.max(3,v.n/maxV*100)}%;background:${col(m)};animation-delay:${i*25}ms"></div>${nm(m)}</div><span class="val">${v.t}</span></div>`}).join("");
+  return `<article class="board"><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center"><h3>${title}</h3>${ctl}</div><p>${desc}</p><div class="rows">${rows||'<span class="muted" style="grid-column:1/-1">Nothing matches the current filter.</span>'}</div>${arr.length>limit?`<button type="button" class="more" data-more="${id}">${S.more[id]?"Show fewer":`Show all ${arr.length}`}</button>`:""}</article>`;
+}
+function renderRank(){
+  const ms=mons(), gs=games(), nr=newestReleased(), unit=S.unit==="t"?"titles":"gens";
+  const most=[...ms].sort((a,b)=>score(b)-score(a)||a.n.localeCompare(b.n));
+  const maxS=most.length?score(most[0]):1;
+  const lastOf=m=>{const a=apps(m);return a[a.length-1]};
+  const waiting=ms.filter(m=>{const l=lastOf(m);return l.k!=="MHWA"&&l!==nr}).sort((a,b)=>lastOf(a).y-lastOf(b).y||a.n.localeCompare(b.n));
+  const maxW=waiting.length?TODAY-lastOf(waiting[0]).y:1;
+  const gapOf=m=>{const a=apps(m);let best=null;for(let i=1;i<a.length;i++){const y=a[i].y-a[i-1].y;if(!best||y>best.y)best={y,a:a[i-1],b:a[i]}}return best};
+  const comebacks=ms.map(m=>({m,g:gapOf(m)})).filter(x=>x.g&&x.g.y>=4).sort((a,b)=>b.g.y-a.g.y).map(x=>x.m);
+  const maxC=comebacks.length?gapOf(comebacks[0]).y:1;
+  const hypeBack=ms.filter(m=>m.r).map(m=>({m,g:gapOf(m)})).filter(x=>x.g&&x.g.y>=4).map(x=>({m:x.m,g:x.g,h:hype(x.g.y,x.m)})).sort((a,b)=>b.h-a.h);
+  const hbIdx=Object.fromEntries(hypeBack.map(x=>[x.m.n,x]));
+  const hypeWait=waiting.filter(m=>m.r).map(m=>({m,y:TODAY-lastOf(m).y})).map(x=>({...x,h:hype(x.y,x.m)})).sort((a,b)=>b.h-a.h);
+  const hwIdx=Object.fromEntries(hypeWait.map(x=>[x.m.n,x]));
+  const genList=[...new Set(gs.map(g=>g.g))];
+  const streak=m=>{let best=0,cur=0;
+    if(S.unit==="g"){const has=new Set(gens(m));genList.forEach(n=>{if(has.has(n)){cur++;best=Math.max(best,cur)}else cur=0})}
+    else gs.forEach(g=>{if(m.flags[g.i]){cur++;best=Math.max(best,cur)}else cur=0});
+    return best};
+  const streaks=[...ms].sort((a,b)=>streak(b)-streak(a)||a.n.localeCompare(b.n));
+  const allG=new Set(gs.map(g=>g.g));
+  const veterans=ms.filter(m=>gens(m).length===allG.size);
+  const once=ms.filter(m=>apps(m).length===1);
+  const famSize={}; ms.forEach(m=>famSize[m.b]=(famSize[m.b]||0)+1);
+  const fams=Object.entries(famSize).filter(([b,n])=>n>1&&byName[b]).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([b])=>byName[b]);
+  const maxF=fams.length?famSize[fams[0].n]:1;
+  return `<div class="boards">
+    ${board("back","Biggest comebacks","Longest gap between two consecutive appearances, in years.",comebacks,m=>{const g=gapOf(m);return {n:g.y,t:`${g.y.toFixed(1)} y · ${g.a.s}→${g.b.s}`}},maxC)}
+    ${board("hype","Hype comebacks","Years away × fan rating (1–10). A long break only scores big if fans missed the monster.",hypeBack.map(x=>x.m),m=>{const x=hbIdx[m.n];return {n:x.h,t:`<b class="hype">${Math.round(x.h)}</b> ${x.g.y.toFixed(1)} y × ${fanTxt(m)}`}},hypeBack.length?hypeBack[0].h:1)}
+    ${board("hypewait","Most anticipated returns",`Still missing from ${esc(nr.t)}${S.wa?" and Ascendance":""}: years waiting × fan rating. The comebacks fans want most.`,hypeWait.map(x=>x.m),m=>{const x=hwIdx[m.n];return {n:x.h,t:`<b class="hype">${Math.round(x.h)}</b> ${x.y.toFixed(1)} y × ${fanTxt(m)}`}},hypeWait.length?hypeWait[0].h:1)}
+    ${board("most","Most appearances",`Ranked by ${S.unit==="t"?"titles":"generations"}. Switch “Count by” in the bar above to compare.`,most,m=>({n:score(m),t:`${score(m)} ${unit}`}),maxS)}
+    ${board("wait","Waiting the longest",`Not in ${esc(nr.t)}${S.wa?" and not confirmed for Ascendance":""}. Years since the last title they appeared in.`,waiting,m=>({n:TODAY-lastOf(m).y,t:`${(TODAY-lastOf(m).y).toFixed(1)} y · ${lastOf(m).s}`}),maxW)}
+    ${board("streak","Longest unbroken run",S.unit==="g"?"Most consecutive generations in a row. One title per generation is enough. Switch “Count by” above for single titles.":"Most consecutive titles in a row without being left out. Switch “Count by” above for generations.",streaks,m=>({n:streak(m),t:`${streak(m)} ${S.unit==="g"?"gens":"titles"}`}),streaks.length?streak(streaks[0]):1)}
+    ${board("fam","Biggest families","Base monsters with the most subspecies, variants and deviants in the current filter.",fams,m=>({n:famSize[m.n],t:`${famSize[m.n]} forms`}),maxF)}
+    <article class="board"><h3>Every-generation veterans</h3><p>Present in all ${allG.size} generations.</p><div class="cloud">${veterans.map(m=>nm(m)).join("")||'<span class="muted">None in the current filter.</span>'}</div></article>
+    <article class="board"><h3>One-title wonders</h3><p>${once.length} monsters have appeared in exactly one title so far.</p><div class="cloud">${once.map(m=>nm(m,`title="${esc(apps(m)[0].t)}"`)).join("")}</div></article>
+  </div>`;
+}
+
+// ---------- Titles ----------
+function renderTitles(){
+  const ms=mons(), gs=games(), deb=debutMap();
+  const rows=gs.map(g=>{const roster=ms.filter(m=>m.flags[g.i]); const d=roster.filter(m=>deb[m.n]===g.i).length;
+    const xb=g.x&&gs.find(b=>b.k===g.x); const nw=xb?roster.filter(m=>!m.flags[xb.i]).length:null;
+    return {g,tot:roster.length,d,nw,ret:roster.length-d}});
+  const sorted=S.tsort==="debut"?[...rows].sort((a,b)=>b.d-a.d):S.tsort==="total"?[...rows].sort((a,b)=>b.tot-a.tot):rows;
+  const max=Math.max(1,...rows.map(r=>r.tot));
+  const sel=rows.find(r=>r.g.k===S.title)||rows[rows.length-1];
+  const roster=ms.filter(m=>m.flags[sel.g.i]);
+  const xb=sel.g.x&&gs.find(b=>b.k===sel.g.x);
+  return `<div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="legend"><span><i style="background:var(--brass)"></i>Debut monsters</span><span><i style="background:var(--g3)"></i>New in expansion, returning</span><span><i style="background:var(--line)"></i>Other returning monsters</span><span><span class="gstar" style="margin:0 4px 0 0">G★</span>G-rank expansion</span></div>
+      <div class="seg" id="tsort"><button type="button" data-s="chrono" aria-pressed="${!S.tsort||S.tsort==="chrono"}">Release order</button><button type="button" data-s="debut" aria-pressed="${S.tsort==="debut"}">Most debuts</button><button type="button" data-s="total" aria-pressed="${S.tsort==="total"}">Biggest roster</button></div></div>
+    <div class="tchart">${sorted.map((r,i)=>{const nwRet=r.nw!=null?Math.max(0,r.nw-r.d):0;
+      return `<div class="trow ${r.g.k===sel.g.k?"on":""}" data-t="${r.g.k}"><div class="tt"><small style="${ttext(r.g)}">Gen ${r.g.g} · ${r.g.year}</small>${esc(r.g.t.replace("Monster Hunter","MH"))}${gst(r.g)}</div>
+      <div class="stack" style="width:${r.tot/max*100}%"><span style="width:${r.d/r.tot*100}%;background:var(--brass);animation-delay:${i*30}ms"></span><span style="width:${nwRet/r.tot*100}%;background:var(--g3)"></span><span style="flex:1;background:var(--line)"></span></div>
+      <div class="tv">${r.tot} · <span style="color:var(--brass-2)">${r.d}★</span>${r.nw!=null?` · +${r.nw}`:""}</div></div>`}).join("")}</div>
+    <section class="roster"><div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline">
+      <h3 style="${ttext(sel.g)}">${esc(sel.g.t)}${gst(sel.g)}</h3><span class="mono muted">${sel.g.d} · Gen ${sel.g.g}</span></div>
+      <p class="note">${sel.tot} large monsters, ${sel.d} of them making their series debut here.${xb?` As an expansion of ${esc(xb.t)} it adds ${sel.nw} monsters to the base roster.`:""}${sel.g.k==="MHWA"?" Preview roster: only monsters confirmed before release.":""}</p>
+      <div class="rgrid">${roster.sort((a,b)=>(deb[b.n]===sel.g.i)-(deb[a.n]===sel.g.i)||a.n.localeCompare(b.n)).map(m=>`<div><span class="sw" style="background:${col(m)}"></span>${nm(m)}${deb[m.n]===sel.g.i?'<span class="badge">DEBUT</span>':xb&&!m.flags[xb.i]?'<span class="badge n">NEW</span>':""}</div>`).join("")}</div>
+    </section>`;
+}
+
+
+
+// ---------- Fan Favourites ----------
+function avgBars(groups,colorFn){
+  const max=10;
+  return `<div class="avgbars">${groups.map((g,i)=>`<span>${g.label}</span><div class="trk"><i style="width:${g.a?g.a.avg/max*100:0}%;background:${colorFn(g)};animation-delay:${i*40}ms"></i></div><span class="v">${g.a?`${avgTxt(g.a)} · ${g.a.n}`:"–"}</span>`).join("")}</div>`;
+}
+function scatter(ms){
+  const W=760,H=420,L=46,R=14,T=16,B=42;
+  const deb=debutMap(), gs=games();
+  const lastOf=m=>{const a=apps(m);return a[a.length-1]};
+  const AX={
+    apps:{lab:`Appearances (${S.unit==="t"?"titles":"generations"}) →`, v:m=>score(m), tick:v=>v, step:1, jit:.55, txt:m=>`${score(m)} ${S.unit==="t"?"titles":"gens"}`},
+    debut:{lab:"Debut year →", v:m=>gs[deb[m.n]].y, tick:v=>Math.round(v), step:2, jit:.6, txt:m=>`debut ${gs[deb[m.n]].s} (${gs[deb[m.n]].year})`},
+    last:{lab:"Last appearance →", v:m=>lastOf(m).y, tick:v=>Math.round(v), step:2, jit:.6, txt:m=>`last seen ${lastOf(m).s} (${lastOf(m).year})`}
+  };
+  const ax=AX[S.gx]||AX.apps;
+  const xs=ms.map(ax.v), xmin=Math.min(...xs)-(S.gx==="apps"?.5:1), xmax=Math.max(...xs)+(S.gx==="apps"?0:1);
+  const X=v=>L+(v-xmin)/(xmax-xmin)*(W-L-R), Y=r=>T+(r-1)/(RMAX-1)*(H-T-B);
+  const sorted=a=>[...a].sort((p,q)=>p-q);
+  const mx=sorted(xs)[Math.floor(xs.length/2)], my=sorted(ms.map(m=>m.r))[Math.floor(ms.length/2)]||RMAX/2;
+  let g="";
+  for(let r of [1,50,100,150,200]) if(r<=RMAX) g+=`<line x1="${L}" x2="${W-R}" y1="${Y(r)}" y2="${Y(r)}" stroke="var(--line)" stroke-width="1"/><text class="ax" x="${L-6}" y="${Y(r)+3}" text-anchor="end">#${r}</text>`;
+  const first=Math.ceil(xmin), span=xmax-xmin, step=S.gx==="apps"?(span>12?2:1):(span>16?4:2);
+  for(let v=first;v<=xmax;v+=step) g+=`<text class="ax" x="${X(v)}" y="${H-B+16}" text-anchor="middle">${v}</text>`;
+  g+=`<line x1="${X(mx)}" x2="${X(mx)}" y1="${T}" y2="${H-B}" stroke="var(--bone-3)" stroke-dasharray="3 4" opacity=".6"/><line x1="${L}" x2="${W-R}" y1="${Y(my)}" y2="${Y(my)}" stroke="var(--bone-3)" stroke-dasharray="3 4" opacity=".6"/>`;
+  const Q={apps:["Cult favourites","Fan staples","Overlooked","Workhorses"],debut:["Beloved veterans","Beloved newcomers","Forgotten veterans","Newcomers"],last:["Missed favourites","Current favourites","Faded away","Still around"]}[S.gx]||[];
+  if(Q.length) g+=`<text class="q" x="${L+6}" y="${T+12}">${Q[0]}</text><text class="q" x="${W-R-6}" y="${T+12}" text-anchor="end">${Q[1]}</text><text class="q" x="${L+6}" y="${H-B-8}">${Q[2]}</text><text class="q" x="${W-R-6}" y="${H-B-8}" text-anchor="end">${Q[3]}</text>`;
+  g+=`<text class="ax" x="${(L+W-R)/2}" y="${H-6}" text-anchor="middle">${ax.lab}</text><text class="ax" x="12" y="${T+4}" transform="rotate(-90 12 ${T+4})" text-anchor="end">↑ more popular</text>`;
+  const pts=ms.map(m=>{const j=((hash(m.n)%100)/100-.5)*ax.jit;return `<circle data-m="${esc(m.n)}" data-tip="${esc(m.n)} · ${fanTxt(m)} · ${ax.txt(m)}" cx="${X(ax.v(m)+j).toFixed(1)}" cy="${Y(m.r).toFixed(1)}" r="5" fill="${col(m)}" stroke="var(--ink-2)" stroke-width="1.5"/>`}).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Fan rank against ${ax.lab}">${g}${pts}</svg>`;
+}
+function hlNew(){const ms=mons().filter(m=>m.r);if(ms.length<2){S.hl=null;return}
+  let a=ms[Math.floor(Math.random()*ms.length)],b;do{b=ms[Math.floor(Math.random()*ms.length)]}while(b===a||b.r===a.r);
+  S.hl={a:a.n,b:b.n,score:S.hl?S.hl.score:0,streak:S.hl?S.hl.streak:0,best:S.hl?S.hl.best:0,played:S.hl?S.hl.played:0,res:null}}
+function hlPick(w){const h=S.hl;if(!h)return;
+  if(w==="next"){hlNew();render();return}
+  if(h.res)return;
+  const a=byName[h.a],b=byName[h.b],win=(w==="a"?a.r<b.r:b.r<a.r);
+  h.res=w;h.ok=win;h.played++;if(win){h.score++;h.streak++;h.best=Math.max(h.best,h.streak)}else h.streak=0;render()}
+function renderFan(){
+  const all=mons(), ms=all.filter(m=>m.r).sort((a,b)=>a.r-b.r), un=all.length-ms.length;
+  if(!ms.length) return `<p class="muted">No ranked monster matches the current filter. The fan ranks come from the FavRank column of your sheet.</p>`;
+  const top=S.fanTop||25, gs=games(), nr=newestReleased();
+  const topList=top>=999?ms:ms.slice(0,top);
+  const lastOf=m=>{const a=apps(m);return a[a.length-1]};
+  const wanted=ms.filter(m=>{const l=lastOf(m);return l!==nr&&l.k!=="MHWA"});
+  const medS=[...ms.map(score)].sort((a,b)=>a-b)[Math.floor(ms.length/2)];
+  const cult=ms.filter(m=>score(m)<medS);
+  const work=[...ms].filter(m=>m.r>RMAX/2).sort((a,b)=>score(b)-score(a)||b.r-a.r);
+  const deb=debutMap();
+  const byGen=S.fanDeb==="t"
+    ? gs.map(g=>({label:`${esc(g.s)}${isG(g)?' <span class="gstar">G★</span>':""}`,n:g.g,col:tbg(g),a:avgRating(ms.filter(m=>deb[m.n]===g.i))})).filter(x=>x.a)
+    : [...new Set(gs.map(g=>g.g))].map(n=>({label:`Gen ${n}`,n,col:"var(--brass)",a:avgRating(ms.filter(m=>gs[deb[m.n]]&&gs[deb[m.n]].g===n))}));
+  const tags=[...new Set(ms.flatMap(m=>m.tags))];
+  const byTag=tags.map(x=>({label:x,a:avgRating(ms.filter(m=>m.tags.includes(x)))})).filter(g=>g.a).sort((a,b)=>b.a.avg-a.a.avg);
+  const fam={};ms.forEach(m=>(fam[m.b]=fam[m.b]||[]).push(m));
+  const fams=Object.entries(fam).filter(([b,l])=>l.length>1&&byName[b]).map(([b,l])=>({m:byName[b],a:avgRating(l),n:l.length})).sort((a,b)=>b.a.avg-a.a.avg);
+  const famIdx=Object.fromEntries(fams.map(f=>[f.m.n,f]));
+  const R=(id,title,desc,arr,valFn,lim,maxV=10)=>board(id,title,desc,arr,valFn,maxV,lim);
+  return `<div class="fanctl"><p class="note" style="margin:0">Ranks from the 20th Anniversary Hunters' Choice vote. ★ rating turns rank into a 1–10 score (#1 = 10.0, #${RMAX} = 1.0). ${un?`${un} monsters in the current filter weren't in the vote.`:""}</p>
+      <div style="display:flex;gap:8px;align-items:center"><span class="label">Show</span><div class="seg">${[10,25,50,100,999].map(n=>`<button type="button" data-top="${n}" aria-pressed="${top===n}">${n===999?"All":"Top "+n}</button>`).join("")}</div></div></div>
+    <div class="fangrid">
+      ${R("fantop",`Fan top ${top>=999?ms.length:Math.min(top,ms.length)}`,"Highest-voted monsters in the current filter.",topList,m=>({n:rating(m.r),t:fanTxt(m)}),top>=999?ms.length:top)}
+      ${R("fanwant","Fans want them back",`Popular monsters missing from ${esc(nr.t)}${S.wa?" and not confirmed for Ascendance":""}.`,wanted,m=>({n:rating(m.r),t:`${fanTxt(m)} · last ${lastOf(m).s}`}),8)}
+      ${R("fancult","Cult favourites",`Ranked highly despite fewer than ${medS} ${S.unit==="t"?"titles":"generations"}.`,cult,m=>({n:rating(m.r),t:`${fanTxt(m)} · ${score(m)} ${S.unit==="t"?"titles":"gens"}`}),8)}
+      ${R("fanwork","Workhorses","Lower half of the vote, but they keep coming back.",work,m=>({n:score(m),t:`${score(m)} ${S.unit==="t"?"titles":"gens"} · ${fanTxt(m)}`}),8,Math.max(1,...work.map(score)))}
+      ${R("fanfam","Best-loved families","Average rating across all ranked forms of a family.",fams.map(f=>f.m),m=>({n:famIdx[m.n].a.avg,t:`${avgTxt(famIdx[m.n].a)} · ${famIdx[m.n].n} forms`}),8)}
+      <article class="board"><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center"><h3>By debut ${S.fanDeb==="t"?"title":"generation"}</h3><div class="seg"><button type="button" data-fdeb="g" aria-pressed="${S.fanDeb!=="t"}">Generation</button><button type="button" data-fdeb="t" aria-pressed="${S.fanDeb==="t"}">Single titles</button></div></div><p>Average rating of monsters by the ${S.fanDeb==="t"?"title":"generation"} they first appeared in. The number is how many are ranked.</p>${avgBars(byGen,g=>g.col)}</article>
+      <article class="board"><h3>By tag</h3><p>Average rating per category tag in the current filter.</p>${avgBars(byTag,()=>"var(--brass)")}</article>
+    </div>`;
+}
+
+
+// What each title tile shows underneath its abbreviation (switch above the tiles)
+function tileInfo(g,ms,deb){
+  const roster=ms.filter(m=>m.flags[g.i]);
+  switch(S.tinfo){
+    case "ago": { if(g.k==="MHWA"||g.y>TODAY) return "upcoming"; const y=TODAY-g.y; return `${y.toFixed(1)} years ago`; }
+    case "mon": return `${roster.length} monsters`;
+    case "deb": { const d=roster.filter(m=>deb[m.n]===g.i).length; return `${d} debut${d===1?"":"s"}`; }
+    case "drate": { const a=avgRating(roster.filter(m=>deb[m.n]===g.i)); return `<span class="rate">${avgTxt(a)}</span>${a?` · ${a.n}`:""}`; }
+    case "rate": { const a=avgRating(roster); return `<span class="rate">${avgTxt(a)}</span>${a?` · ${a.n}`:""}`; }
+    default: return esc(g.d);
+  }
+}
+
+// ---------- Graphs ----------
+function renderGraphs(){
+  const ms=mons().filter(m=>m.r);
+  if(!ms.length) return `<p class="muted">No ranked monster matches the current filter.</p>`;
+  const opt=[["apps","Appearances"],["debut","Debut year"],["last","Last appearance"]];
+  return `<article class="board scatter"><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center"><h3>Popularity vs. ${opt.find(o=>o[0]===(S.gx||"apps"))[1].toLowerCase()}</h3>
+    <div style="display:flex;gap:8px;align-items:center"><span class="label">X axis</span><div class="seg">${opt.map(([k,l])=>`<button type="button" data-gx="${k}" aria-pressed="${(S.gx||"apps")===k}">${l}</button>`).join("")}</div></div></div>
+    <p>Each dot is a monster in its own colour: higher = more popular in the fan vote. Dashed lines mark the medians. Hover a dot for details, click it to open the monster. ${ms.length} ranked monsters in the current filter.</p>${scatter(ms)}</article>`;
+}
+// ---------- Game ----------
+function renderGame(){
+  const all=mons();
+  if(all.filter(m=>m.r).length<2) return `<p class="muted">The game needs at least two ranked monsters in the current filter.</p>`;
+  if(!S.hl||!byName[S.hl.a]||!byName[S.hl.b]||!all.includes(byName[S.hl.a])||!all.includes(byName[S.hl.b])) hlNew();
+  const h=S.hl;
+  const card=(k)=>{const m=byName[h[k]];const cls=h.res?(m.r<byName[h[k==="a"?"b":"a"]].r?"win":"lose"):"";
+    return `<button type="button" class="hlc ${cls}" data-hl="${k}" style="--mc:${col(m)}"><span class="label">${esc(m.c)}</span><b style="color:${TXT[m.n]}">${esc(m.n)}</b><span class="res">${h.res?fanTxt(m):"?"}</span></button>`};
+  return `<article class="board game"><h3>Higher or lower?</h3><p>Which of the two monsters got more votes in the 20th Anniversary Hunters' Choice? Tap your pick. The tag filter decides which monsters can show up. ${h.res?(h.ok?"<b style='color:#6fd08a'>Correct.</b>":"<b style='color:#e0606a'>Wrong.</b>"):""}</p>
+    <div class="hl">${card("a")}<span class="hlvs">vs</span>${card("b")}</div>
+    <div class="hlscore"><span><b>${h.score}</b>/${h.played} correct</span><span>Streak <b>${h.streak}</b></span><span>Best <b>${h.best}</b></span>${h.res?'<button type="button" class="btn" data-hl="next">Next pair</button>':""}</div></article>`;
+}
+// ---------- Titles (tiles) ----------
+function renderTT(){
+  const gs=games(), ms=mons(), deb=debutMap();
+  if(!gs.find(g=>g.k===S.tt)) S.tt=(newestReleased()||gs[gs.length-1]).k;
+  const sel=gs.find(g=>g.k===S.tt);
+  const gens=[...new Set(gs.map(g=>g.g))];
+  const tiles=gens.map(n=>{const list=gs.filter(g=>g.g===n);
+    return `<div class="ttgen"><div class="ttgen-h" style="border-color:var(--bone-3)"><b style="color:var(--bone-2)">Gen ${n}</b><span>${list[0].year}–${list[list.length-1].year}</span></div>
+      <div class="tttiles">${list.map(g=>`<button type="button" class="tttile" data-tt="${esc(g.k)}" aria-pressed="${g.k===sel.k}" style="--gc:${tbg(g)}" title="${esc(g.t)}">${gst(g)}<b>${esc(g.s)}</b><small class="ti">${tileInfo(g,ms,deb)}</small></button>`).join("")}</div></div>`}).join("");
+  const roster=ms.filter(m=>m.flags[sel.i]);
+  const info=roster.map(m=>{const before=gs.filter(g=>g.i<sel.i&&m.flags[g.i]);const prev=before[before.length-1];
+    return {m,debut:deb[m.n]===sel.i,before,prev,gap:prev?sel.y-prev.y:null}});
+  const debuts=info.filter(x=>x.debut), rets=info.filter(x=>!x.debut);
+  const srt=S.ttSort||"long";
+  const cmp={long:(a,b)=>(b.gap??-1)-(a.gap??-1)||a.m.n.localeCompare(b.m.n),short:(a,b)=>(a.gap??1e9)-(b.gap??1e9)||a.m.n.localeCompare(b.m.n),az:(a,b)=>a.m.n.localeCompare(b.m.n),fan:(a,b)=>(a.m.r??1e9)-(b.m.r??1e9)||a.m.n.localeCompare(b.m.n)}[srt];
+  const list=S.ttDebFirst===false?[...info].sort(cmp):[...debuts.sort(cmp),...rets.sort(cmp)];
+  const xb=sel.x&&gs.find(b=>b.k===sel.x);
+  const approx=sel.k==="MHWA"?"~":"";
+  const tile=x=>{const m=x.m;
+    const prevTxt=x.before.length?`Before: ${x.before.map(g=>esc(g.s)).join(" · ")}`:"First appearance in the series";
+    return `<div class="mtile ${x.debut?"debut":"ret"}" data-m="${esc(m.n)}" style="--mc:${col(m)}">
+      <div class="top">${nm(m)}${S.ttRate&&m.r?`<span class="frank" title="Fan rank #${m.r} · rating ${fmtR(rating(m.r))}">${fanTxt(m)}</span>`:""}<span class="st ${x.debut?"debut":"ret"}">${x.debut?"DEBUT":"RETURNING"}</span></div>
+      ${x.debut?`<div class="gap">New to the series</div>`:`<div class="gap"><b>${approx}${x.gap.toFixed(1)}</b>years since ${esc(x.prev.s)} (${x.prev.year})</div>`}
+      <div class="strip" style="--n:${gs.length}" aria-hidden="true">${gs.map(g=>`<i class="${g.k===sel.k?"cur":""}" style="${m.flags[g.i]?`background:${col(m)};opacity:${g.i<=sel.i?1:.35}`:""}" title="${esc(g.s)}"></i>`).join("")}</div>
+      <div class="prev">${prevTxt}${xb&&!m.flags[xb.i]?' · <span style="color:var(--g3)">new in this expansion</span>':""}</div>
+      <div class="tags">${tagsHtml(m)}</div>
+    </div>`};
+  const FS=S.fan==="rank"?"Ø #":"★";
+  const TI=[["rel","Release"],["ago","Years since release"],["mon","Monsters"],["deb","Debut monsters"],["drate",FS+" Debuts"],["rate",FS+" All monsters"]];
+  return `<div class="tictl"><span class="label">Tiles show</span><div class="seg">${TI.map(([k,l])=>`<button type="button" data-tinfo="${k}" aria-pressed="${S.tinfo===k}">${l}</button>`).join("")}</div></div>
+  <div class="ttgens">${tiles}</div>
+  <section class="ttsel">
+    <div class="ttsel-h"><div><div class="label" style="color:var(--bone-2)">Gen ${sel.g} · ${esc(sel.d)}${isG(sel)?" · G-rank expansion":""}</div><h2 style="${ttext(sel)}">${esc(sel.t)}${gst(sel)}</h2></div>
+      <div class="ttstats"><span><b>${roster.length}</b>monsters</span><span><b style="color:var(--brass-2)">${debuts.length}</b>debuts</span><span><b style="color:var(--g3)">${rets.length}</b>returning</span>${S.ttRate?(()=>{const a=avgRating(roster);return a?`<span title="Average fan rating of the ${a.n} ranked monsters"><b style="color:var(--brass-2)">${avgTxt(a)}</b>${S.fan==="rank"?"avg fan rank":"fan rating"} · ${a.n}/${roster.length} ranked</span>`:""})():""}${xb?`<span><b>${roster.filter(m=>!m.flags[xb.i]).length}</b>new vs ${esc(xb.s)}</span>`:""}</div></div>
+    <div class="ttctl"><div class="legend"><span><i style="background:var(--brass)"></i>Debut monster</span><span><i style="background:var(--g3)"></i>Returning monster</span><span>Strip: all titles, outlined = this one</span></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span class="label">Sort</span><div class="seg"><button type="button" data-ts="long" aria-pressed="${srt==="long"}">Longest absence</button><button type="button" data-ts="short" aria-pressed="${srt==="short"}">Shortest absence</button><button type="button" data-ts="az" aria-pressed="${srt==="az"}">A – Z</button>${S.ttRate?`<button type="button" data-ts="fan" aria-pressed="${srt==="fan"}">Fan rank</button>`:""}</div>
+      <button type="button" class="chip" data-trate="1" aria-pressed="${!!S.ttRate}"><span class="dot"></span>★ Fan rating</button>
+      <button type="button" class="chip" data-tdf="1" aria-pressed="${S.ttDebFirst!==false}"><span class="dot"></span>Debuts first</button></div></div>
+    ${roster.length?`<div class="mtiles">${list.map(tile).join("")}</div>`:'<p class="muted">No monster of this title matches the current filter.</p>'}
+  </section>`;
+}
+
+// ---------- Matrix ----------
+function renderMx(){
+  const gs=games(); let ms=mons(); const deb=debutMap();
+  if(S.mxSort==="apps") ms=[...ms].sort((a,b)=>score(b)-score(a)||a.n.localeCompare(b.n));
+  else if(S.mxSort==="name") ms=[...ms].sort((a,b)=>a.n.localeCompare(b.n));
+  else if(S.mxSort==="last") ms=[...ms].sort((a,b)=>{const la=apps(a).pop().i, lb=apps(b).pop().i;return la-lb||a.n.localeCompare(b.n)});
+  else ms=[...ms].sort((a,b)=>deb[a.n]-deb[b.n]||M.indexOf(a)-M.indexOf(b));
+  const head=gs.map((g,i)=>(i>0&&gs[i-1].g!==g.g?'<th class="gsep"></th>':"")+`<th title="${esc(g.t)}"><div style="${ttext(g)}">${esc(g.s)} · ${g.year}${isG(g)?" · G★":""}</div></th>`).join("");
+  const body=ms.map(m=>`<tr><td class="nm">${nm(m)}</td>${gs.map((g,i)=>(i>0&&gs[i-1].g!==g.g?'<td class="gsep"></td>':"")+`<td class="c" data-tip="${esc(m.n)} · ${esc(g.t)}${m.flags[g.i]?"":" (absent)"}" style="${m.flags[g.i]?`background:${col(m)};${deb[m.n]===g.i?"box-shadow:0 0 0 1px #fff inset":""}`:""}"></td>`).join("")}</tr>`).join("");
+  return `<div class="mx-ctl"><label class="label" for="mxs">Sort rows</label>
+    <select id="mxs"><option value="debut">By debut</option><option value="apps">By appearances</option><option value="last">By last appearance</option><option value="name">A – Z</option></select>
+    <span class="muted" style="font-size:13px">${ms.length} rows × ${gs.length} titles. Outlined cell = debut. Hover a cell for details.</span></div>
+    <div class="mx"><table><thead><tr><th class="nm"></th>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+
+// ---------- render + events ----------
+const main=document.getElementById("main");
+function applyLayout(){document.body.classList.toggle("m",S.lay==="m");document.querySelectorAll("#laySeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lay===S.lay))}
+function render(){
+  applyLayout();
+  renderBar(); renderHero();
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.p===S.tab));
+  main.innerHTML=`<div class="panel">${S.tab==="tt"?renderTT():S.tab==="best"?renderBest():S.tab==="rank"?renderRank():S.tab==="fan"?renderFan():S.tab==="graph"?renderGraphs():S.tab==="game"?renderGame():S.tab==="titles"?renderTitles():renderMx()}</div>`;
+  const mxs=document.getElementById("mxs"); if(mxs) mxs.value=S.mxSort;
+  save();
+}
+function pick(n){S.sel=n;S.tab="best";render();window.scrollTo({top:document.querySelector(".tabs").offsetTop-60,behavior:"smooth"})}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-m],[data-c],[data-call],[data-tagclose],[data-fan],[data-u],[data-f],[data-p],[data-g],[data-t],[data-s],[data-more],[data-gx],[data-tinfo],[data-fdeb],[data-trate],[data-top],[data-hl],[data-lay],[data-step],[data-tt],[data-ts],[data-tdf],#waToggle,#rand"); if(!t)return;
+  if(t.id==="waToggle"){S.wa=!S.wa; if(!S.wa&&S.title==="MHWA")S.title="MHWilds"; render();return}
+  if(t.id==="rand"){const ms=mons();S.sel=ms[Math.floor(Math.random()*ms.length)].n;S.q="";render();return}
+  if(t.dataset.c){const c=t.dataset.c; S.cats.has(c)?S.cats.delete(c):S.cats.add(c); render();return}
+  if(t.dataset.tagclose){S.tagOpen=false;renderBar();return}
+  if(t.dataset.call){S.cats=new Set(t.dataset.call==="1"?[...CATS,...ELEMS,...CLASSES,...OTHERS]:[]);render();return}
+  if(t.dataset.u){S.unit=t.dataset.u;render();return}
+  if(t.dataset.fan){S.fan=t.dataset.fan;render();return}
+  if(t.dataset.f){S.fam=t.dataset.f;render();return}
+  if(t.dataset.p){S.tab=t.dataset.p;render();return}
+  if(t.dataset.g){S.tt=t.dataset.g;S.tab="tt";render();return}
+  if(t.dataset.t){S.title=t.dataset.t;render();return}
+  if(t.dataset.s){S.tsort=t.dataset.s;render();return}
+  if(t.dataset.gx){S.gx=t.dataset.gx;render();return}
+  if(t.dataset.tinfo){S.tinfo=t.dataset.tinfo;render();return}
+  if(t.dataset.fdeb){S.fanDeb=t.dataset.fdeb;render();return}
+  if(t.dataset.trate){S.ttRate=!S.ttRate;if(!S.ttRate&&S.ttSort==="fan")S.ttSort="long";render();return}
+  if(t.dataset.top){S.fanTop=+t.dataset.top;render();return}
+  if(t.dataset.hl){hlPick(t.dataset.hl);return}
+  if(t.dataset.lay){S.lay=t.dataset.lay;render();return}
+  if(t.dataset.step){const ms=mons().filter(m=>!S.q||m.n.toLowerCase().includes(S.q.toLowerCase()));const i=ms.findIndex(m=>m.n===S.sel)+ +t.dataset.step;if(ms[i]){S.sel=ms[i].n;render()}return}
+  if(t.dataset.tt){S.tt=t.dataset.tt;render();return}
+  if(t.dataset.ts){S.ttSort=t.dataset.ts;render();return}
+  if(t.dataset.tdf){S.ttDebFirst=S.ttDebFirst===false;render();return}
+  if(t.dataset.more){S.more[t.dataset.more]=!S.more[t.dataset.more];render();return}
+  if(t.dataset.m){ if(t.tagName==="LI"){S.sel=t.dataset.m;document.getElementById("profile").innerHTML=profile(byName[S.sel]);document.querySelectorAll("#mlist li").forEach(l=>l.classList.toggle("on",l.dataset.m===S.sel));save()} else pick(t.dataset.m)}
+});
+document.addEventListener("input",e=>{
+  if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=document.getElementById("q");q.focus();q.setSelectionRange(pos,pos)}
+});
+document.addEventListener("change",e=>{if(e.target.id==="mxs"){S.mxSort=e.target.value;render()} if(e.target.id==="msel"){S.sel=e.target.value;render()}});
+const tip=document.getElementById("tip");
+document.addEventListener("mousemove",e=>{const c=e.target.closest("[data-tip]"); if(!c){tip.style.display="none";return}
+  tip.textContent=c.dataset.tip;tip.style.display="block";tip.style.left=Math.min(e.clientX+14,innerWidth-270)+"px";tip.style.top=(e.clientY+14)+"px"});
+render();
+
+
+
+// ---------- Tag dropdown ----------
+document.addEventListener("click",e=>{
+  if(e.target.closest("#tagBtn")){S.tagOpen=!S.tagOpen;renderBar();e.stopPropagation();return}
+  if(S.tagOpen&&!e.target.closest("#catChips")){S.tagOpen=false;renderBar()}
+},true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.tagOpen){S.tagOpen=false;renderBar();const b=document.getElementById("tagBtn");if(b)b.focus()}});
+// ---------- About ----------
+(function(){
+  const wrap=document.getElementById("infoWrap"); if(!wrap) return;
+  const open=()=>{wrap.hidden=false;document.getElementById("infoClose").focus()};
+  const close=()=>{wrap.hidden=true;document.getElementById("infoOpen").focus()};
+  document.getElementById("infoOpen").addEventListener("click",open);
+  document.getElementById("infoClose").addEventListener("click",close);
+  wrap.addEventListener("click",e=>{if(e.target===wrap)close()});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!wrap.hidden)close()});
+})();
+// ---------- Changelog ----------
+const CHANGELOG = [{"v": "22", "at": "2026-10-08 14:12", "items": ["New About button with links to Fox Invictus on X and YouTube, a PayPal support link and data credits."]}, {"v": "21", "at": "2026-10-08 14:10", "items": ["Every title now has its own signature colour (e.g. Freedom Unite green, Iceborne ice blue, Ascendance blue-to-red), used on title tiles, the timeline, appearance strips, matrix headers and title stats.", "Generations are shown in neutral grey so the two colour systems no longer compete."]}, {"v": "20", "at": "2026-10-08 14:05", "items": ["Elements per monster (Fire, Water, Thunder, Ice, Dragon or none), checked against the Monster Hunter Wiki, read from a new Element column in the sheet.", "New Element group in the Tags dropdown."]}, {"v": "19", "at": "2026-10-08 13:35", "items": ["New Flagship tag for the 21 flagship monsters of the main series (per the Monster Hunter Wiki), listed under Other in the Tags dropdown."]}, {"v": "18", "at": "2026-10-08 13:30", "items": ["Higher or lower? moved to its own Game tab with larger cards.", "Popularity chart moved to its own Interactive Graphs tab, now with a switchable X axis: appearances, debut year or last appearance."]}, {"v": "17", "at": "2026-10-08 13:20", "items": ["Fixed: longest absence in the monster profile now counts an absence that is still running up to today (e.g. Ukanlos since GU).", "New “Fan” switch next to Count by: show fan votes as ★ rating or # rank everywhere; averages show as Ø rank.", "Rankings: Biggest comebacks moved to the top.", "New Hype comebacks board: years away × fan rating, so a popular return beats a longer but less-loved one.", "New Most anticipated returns board: years still missing × fan rating."]}, {"v": "16", "at": "2026-10-07 22:37", "items": ["Tag filters moved into a single “Tags” dropdown with Form, Class and Other groups, checkboxes, counts and All/None."]}, {"v": "15", "at": "2026-10-07 22:35", "items": ["Fixed: the changelog window can be closed again (✕, click outside, Esc)."]}, {"v": "14", "at": "2026-10-07 22:33", "items": ["Added this changelog."]}, {"v": "13", "at": "2026-10-07 22:30", "items": ["Titles: new “Tiles show” switch – release date, years since release, monsters, debut monsters, ★ rating of debuts or of all monsters.", "Fan Favourites: “By debut” switches between generations and single titles.", "The page now always opens on the Titles tab."]}, {"v": "12", "at": "2026-10-07 22:16", "items": ["Monster classes added as tags (Flying Wyvern, Leviathan, Elder Dragon …), checked against the Monster Hunter Wiki.", "Filter bar split into Form, Class and Other, with All and None buttons."]}, {"v": "11", "at": "2026-10-07 22:01", "items": ["Renamed from Hunter's Ledger to Wyvern Compendium.", "Fan ranks from the 20th Anniversary Hunters' Choice vote, read live from the FavRank column.", "New Fan Favourites tab: fan top list, Higher or lower? game, popularity vs. appearances chart, fans want them back, cult favourites, workhorses, best-loved families, ratings by debut generation and by tag.", "IMDb-style ★ fan rating on title tiles, in the title header and on monster tiles; fan rank in the monster profile.", "Sheet columns are now detected by content, so extra columns no longer break the import."]}, {"v": "10", "at": "2026-10-07 20:17", "items": ["Desktop 16:9 / Mobile 9:16 layout switch with a compact phone layout."]}, {"v": "9", "at": "2026-10-07 20:07", "items": ["New Titles tab: title tiles grouped by generation, monster tiles per title with debut/returning highlight, years since last appearance, appearance strip and sorting.", "The old Titles tab is now called Title stats."]}, {"v": "8", "at": "2026-10-07 19:45", "items": ["Family / Separate switch: show only main monsters or every form.", "Ancient Leshen now belongs to the Leshen family."]}, {"v": "7", "at": "2026-10-07 19:40", "items": ["Simpler filter: every tag is a plain on/off button; a monster shows if any of its tags is on."]}, {"v": "6", "at": "2026-10-07 19:35", "items": ["Filter split into form and type buttons (replaced in v7)."]}, {"v": "5", "at": "2026-10-07 19:27", "items": ["Longest unbroken run now follows the Count by switch; the extra switch was removed.", "Fixed ranking bars drawn at different scales (e.g. Giadrome)."]}, {"v": "4", "at": "2026-10-07 19:19", "items": ["Monsters can carry several tags at once, e.g. “Subspecies, Elder Dragon”.", "Elder Dragon subspecies corrected per the wiki (Crimson/White Fatalis, Ashen Lao-Shan Lung, Shah Dalamadur)."]}, {"v": "3", "at": "2026-10-07 19:17", "items": ["Elder Dragon category added; Abyssal Lagiacrus, Molten Tigrex and Violet Mizutsune corrected to Rare Species.", "G★ marks every G-rank expansion.", "Bestiary renamed to Monster."]}, {"v": "2", "at": "2026-10-07 18:55", "items": ["Live data from the Google Sheet via the Google Sheets connector, with status indicator, reload and built-in snapshot as fallback."]}, {"v": "1", "at": "2026-10-07 18:48", "items": ["First version as Hunter's Ledger: monster profiles, rankings, title rosters and appearance matrix for 256 large monsters across 19 titles, with filters and monster colours."]}];
+(function(){
+  const wrap=document.getElementById("clWrap"), list=document.getElementById("clList");
+  if(!wrap) return;
+  list.innerHTML=CHANGELOG.map(e=>`<li><div class="v"><b>v${e.v}</b><span>${e.at.replace(" "," · ")}</span></div><ul>${e.items.map(x=>`<li style="border:0;padding:0;display:list-item">${esc(x)}</li>`).join("")}</ul></li>`).join("");
+  const open=()=>{wrap.hidden=false;document.getElementById("clClose").focus()};
+  const close=()=>{wrap.hidden=true;document.getElementById("clOpen").focus()};
+  document.getElementById("clOpen").addEventListener("click",open);
+  document.getElementById("clClose").addEventListener("click",close);
+  wrap.addEventListener("click",e=>{if(e.target===wrap)close()});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!wrap.hidden)close()});
+})();
+// ---------- live data from Google Sheets ----------
+var SRC={state:"snapshot",at:null,msg:"",action:null};
+function renderSrc(){
+  const el=document.getElementById("src"); if(!el)return;
+  const time=SRC.at?new Date(SRC.at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}):"";
+  const pill={live:["live",`Live · Google Sheets${time?" · "+time:""}`],loading:["warn","Loading sheet…"],snapshot:["warn","Built-in snapshot · 7 Oct 2026"],error:["bad","Sheet not loaded"]}[SRC.state];
+  el.innerHTML=`<span class="pill ${pill[0]}"><i></i>${pill[1]}</span>${SRC.msg?`<span>${esc(SRC.msg)}</span>`:""}${SRC.action?`<button type="button" id="srcAct">${esc(SRC.action.label)}</button>`:""}<a href="${SHEET_URL}" target="_blank" rel="noopener">Open sheet</a>`;
+  const b=document.getElementById("srcAct"); if(b&&SRC.action) b.onclick=SRC.action.run;
+}
+function applySheet(payload,at){
+  try{
+    const parsed=fromSheet(payload&&payload.values);
+    setData(parsed.games,parsed.mons);
+    syncTags();
+    if(!byName[S.sel]) S.sel=M[0].n;
+    if(!G.find(g=>g.k===S.title)) S.title=G[G.length-1].k;
+    Object.assign(SRC,{state:"live",at:at||Date.now(),msg:`${M.length} monsters × ${G.length} titles read from the sheet.`,action:{label:"Reload",run:()=>loadOnce(true)}});
+    render();
+  }catch(e){
+    Object.assign(SRC,{state:"error",msg:`The sheet was read, but its layout could not be used: ${e.message} Showing the last good data.`,action:{label:"Try again",run:()=>loadOnce(true)}});
+    renderSrc();
+  }
+}
+function explain(err){
+  const code=err&&err.code;
+  switch(code){
+    case "needs_reauth": return {msg:"Your Google Sheets connection has expired. Reconnect Google Sheets in claude.ai Settings → Connectors, then reload.",retry:true};
+    case "server_not_connected": return {msg:"Google Sheets isn't connected for you. Add it in claude.ai Settings → Connectors, then reload.",retry:true};
+    case "selection_required": return {msg:"You have more than one Google Sheets connector. Choose one in the prompt, then reload.",retry:true};
+    case "not_in_manifest": return {msg:"Google Sheets access was turned off for this page. Allow it in the page's permissions to see live data.",perm:true};
+    case "approval_required": return {msg:"Reading the sheet needs your approval.",approve:true};
+    case "blocked_by_policy": return {msg:"Your organization blocks this Google Sheets tool."};
+    case "tool_error": return {msg:`Google Sheets reported a problem: ${err.message||"unknown error"}. Check that the sheet still exists and you can open it.`,retry:true};
+    case "server_unavailable": case "rate_limited": return {msg:"Google Sheets didn't answer just now.",retry:true,transient:true};
+    default: return {msg:`The sheet could not be loaded (${code||"unknown"}).`,retry:true,transient:true};
+  }
+}
+let mcpRef=null;
+const INPUT={spreadsheetId:SHEET_ID,range:"A1:ZZ2000"};
+function onFail(err){
+  const x=explain(err);
+  const hadLive=SRC.state==="live";
+  const action=x.approve?{label:"Allow and load",run:()=>loadOnce(true)}:x.perm?{label:"Open permissions",run:async()=>{try{const p=await claude.use("permissions");await p.manage()}catch(e){}}}:x.retry?{label:"Try again",run:()=>loadOnce(true)}:null;
+  Object.assign(SRC,{state:hadLive&&x.transient?"live":"error",msg:x.msg+(hadLive&&x.transient?" Showing the last loaded data.":" Showing the built-in snapshot."),action});
+  if(!x.transient&&hadLive){setData(DATA.games,DATA.mons);SRC.state="error";render()}else renderSrc();
+}
+async function loadOnce(fresh){
+  if(!mcpRef){renderSrc();return}
+  SRC.state=SRC.state==="live"?"live":"loading"; SRC.msg="Reading the sheet…"; SRC.action=null; renderSrc();
+  try{const r=await mcpRef.callTool("Google Sheets","get_values",INPUT,fresh?{cache:{refresh:true}}:undefined);
+    applySheet(r.payload,r.cache&&r.cache.storedAt)}catch(e){onFail(e)}
+}
+(async()=>{
+  SRC.state="loading"; SRC.msg="Connecting to Google Sheets…"; renderSrc();
+  let mcp=null; try{ mcp=window.claude&&await window.claude.use("mcp") }catch(e){}
+  if(!mcp){Object.assign(SRC,{state:"snapshot",msg:"Live data isn't available in this view.",action:null}); renderSrc(); return}
+  mcpRef=mcp;
+  mcp.watchTool("Google Sheets","get_values",INPUT,ev=>{
+    if(ev.type==="data") applySheet(ev.result.payload, ev.result.cache&&ev.result.cache.storedAt);
+    else onFail(ev.error);
+  },{cache:{staleTime:60000},refetchInterval:300000});
+})();
+</script>
