@@ -418,7 +418,7 @@ footer{margin-top:40px;font-size:13px;color:var(--bone-3);border-top:1px solid v
 <div class="wrap">
   <div class="layrow"><div class="label">Field ledger of large monsters · Main series 2004 – 2027</div>
     <div class="seg" id="laySeg" aria-label="Layout"><button type="button" data-lay="d" aria-pressed="true" title="Wide layout for desktop screens">▭ Desktop 16:9</button><button type="button" data-lay="m" aria-pressed="false" title="Compact layout for phones">▯ Mobile 9:16</button></div>
-    <span style="display:inline-flex;gap:6px"><button type="button" class="chip" id="infoOpen" aria-haspopup="dialog">ⓘ About</button><button type="button" class="chip" id="clOpen" aria-haspopup="dialog">Changelog · v22</button></span></div>
+    <span style="display:inline-flex;gap:6px"><button type="button" class="chip" id="infoOpen" aria-haspopup="dialog">ⓘ About</button><button type="button" class="chip" id="clOpen" aria-haspopup="dialog">Changelog · v24</button></span></div>
   <header class="hero">
     <h1>Wyvern <span>Compendium</span></h1>
     <p>Every large monster of the main Monster Hunter series, from the first Rathalos on PS2 to the announced Wilds expansion. Pick a monster, compare rankings, and see which titles brought the most first-time hunts.</p>
@@ -455,7 +455,7 @@ footer{margin-top:40px;font-size:13px;color:var(--bone-3);border-top:1px solid v
 
   <main id="main"></main>
 
-  <footer>Data: your Google Sheet “MH Monster Compendium”, read live through your Google Sheets connector each time the page opens. If it cannot be reached, the page shows the built-in snapshot from 7 October 2026, compiled from the per-game lists of the Monster Hunter Wiki. Fan ranks: Monster Hunter 20th Anniversary Hunters' Choice vote (monsterhunter.com), read from the FavRank column. Release dates are the first Japanese release. Wilds: Ascendance is due in 2027; its roster shows only monsters confirmed so far. Tempered, Arch-Tempered, Hyper and Afflicted are difficulty tiers and are not counted as separate monsters.</footer>
+  <footer>Data as of 8 October 2026 from the “MH Monster Compendium” sheet, compiled from the per-game monster lists, classes and elements of the Monster Hunter Wiki. Fan ranks: Monster Hunter 20th Anniversary Hunters' Choice vote (monsterhunter.com), read from the FavRank column. Release dates are the first Japanese release. Wilds: Ascendance is due in 2027; its roster shows only monsters confirmed so far. Tempered, Arch-Tempered, Hyper and Afflicted are difficulty tiers and are not counted as separate monsters.</footer>
 </div>
 <div class="tip" id="tip"></div>
 <div class="clwrap" id="infoWrap" hidden><div class="clbox" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
@@ -570,7 +570,7 @@ const gst=g=>isG(g)?'<span class="gstar" title="G-rank expansion">G★</span>':"
 const TRUTHY=/^(true|wahr|yes|ja|x|1|✓|✔)$/i;
 function fromSheet(values){
   const rows=(values||[]).map(r=>r.map(c=>String(c??"").trim()));
-  const hi=rows.findIndex(r=>/^monster$/i.test(r[0]||""));
+  const hi=rows.findIndex(r=>/(^|\s)monster$/i.test(r[0]||""));
   if(hi<0) throw new Error("No row with “Monster” in column A was found.");
   const head=rows[hi]; const data=rows.slice(hi+1);
   const BOOL=/^(true|false|wahr|falsch)$/i;
@@ -597,7 +597,9 @@ function fromSheet(values){
     mons.push({n,c,a,r:Number.isFinite(rv)?rv:null,e:elemCol>=0?(row[elemCol]||""):null});
   }
   if(!mons.length) throw new Error("No monster rows with at least one ticked title were found.");
-  return {games,mons};
+  let updated=null;
+  for(const r of rows.slice(0,hi+1)) for(const c of r){const m=String(c||"").match(/updated:?\s*(\d{4}-\d{1,2}-\d{1,2})/i); if(m){updated=m[1];break}}
+  return {games,mons,updated};
 }
 setData(DATA.games, DATA.mons);
 
@@ -1029,7 +1031,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.tagOpen){S.tagOpe
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!wrap.hidden)close()});
 })();
 // ---------- Changelog ----------
-const CHANGELOG = [{"v": "22", "at": "2026-10-08 14:12", "items": ["New About button with links to Fox Invictus on X and YouTube, a PayPal support link and data credits."]}, {"v": "21", "at": "2026-10-08 14:10", "items": ["Every title now has its own signature colour (e.g. Freedom Unite green, Iceborne ice blue, Ascendance blue-to-red), used on title tiles, the timeline, appearance strips, matrix headers and title stats.", "Generations are shown in neutral grey so the two colour systems no longer compete."]}, {"v": "20", "at": "2026-10-08 14:05", "items": ["Elements per monster (Fire, Water, Thunder, Ice, Dragon or none), checked against the Monster Hunter Wiki, read from a new Element column in the sheet.", "New Element group in the Tags dropdown."]}, {"v": "19", "at": "2026-10-08 13:35", "items": ["New Flagship tag for the 21 flagship monsters of the main series (per the Monster Hunter Wiki), listed under Other in the Tags dropdown."]}, {"v": "18", "at": "2026-10-08 13:30", "items": ["Higher or lower? moved to its own Game tab with larger cards.", "Popularity chart moved to its own Interactive Graphs tab, now with a switchable X axis: appearances, debut year or last appearance."]}, {"v": "17", "at": "2026-10-08 13:20", "items": ["Fixed: longest absence in the monster profile now counts an absence that is still running up to today (e.g. Ukanlos since GU).", "New “Fan” switch next to Count by: show fan votes as ★ rating or # rank everywhere; averages show as Ø rank.", "Rankings: Biggest comebacks moved to the top.", "New Hype comebacks board: years away × fan rating, so a popular return beats a longer but less-loved one.", "New Most anticipated returns board: years still missing × fan rating."]}, {"v": "16", "at": "2026-10-07 22:37", "items": ["Tag filters moved into a single “Tags” dropdown with Form, Class and Other groups, checkboxes, counts and All/None."]}, {"v": "15", "at": "2026-10-07 22:35", "items": ["Fixed: the changelog window can be closed again (✕, click outside, Esc)."]}, {"v": "14", "at": "2026-10-07 22:33", "items": ["Added this changelog."]}, {"v": "13", "at": "2026-10-07 22:30", "items": ["Titles: new “Tiles show” switch – release date, years since release, monsters, debut monsters, ★ rating of debuts or of all monsters.", "Fan Favourites: “By debut” switches between generations and single titles.", "The page now always opens on the Titles tab."]}, {"v": "12", "at": "2026-10-07 22:16", "items": ["Monster classes added as tags (Flying Wyvern, Leviathan, Elder Dragon …), checked against the Monster Hunter Wiki.", "Filter bar split into Form, Class and Other, with All and None buttons."]}, {"v": "11", "at": "2026-10-07 22:01", "items": ["Renamed from Hunter's Ledger to Wyvern Compendium.", "Fan ranks from the 20th Anniversary Hunters' Choice vote, read live from the FavRank column.", "New Fan Favourites tab: fan top list, Higher or lower? game, popularity vs. appearances chart, fans want them back, cult favourites, workhorses, best-loved families, ratings by debut generation and by tag.", "IMDb-style ★ fan rating on title tiles, in the title header and on monster tiles; fan rank in the monster profile.", "Sheet columns are now detected by content, so extra columns no longer break the import."]}, {"v": "10", "at": "2026-10-07 20:17", "items": ["Desktop 16:9 / Mobile 9:16 layout switch with a compact phone layout."]}, {"v": "9", "at": "2026-10-07 20:07", "items": ["New Titles tab: title tiles grouped by generation, monster tiles per title with debut/returning highlight, years since last appearance, appearance strip and sorting.", "The old Titles tab is now called Title stats."]}, {"v": "8", "at": "2026-10-07 19:45", "items": ["Family / Separate switch: show only main monsters or every form.", "Ancient Leshen now belongs to the Leshen family."]}, {"v": "7", "at": "2026-10-07 19:40", "items": ["Simpler filter: every tag is a plain on/off button; a monster shows if any of its tags is on."]}, {"v": "6", "at": "2026-10-07 19:35", "items": ["Filter split into form and type buttons (replaced in v7)."]}, {"v": "5", "at": "2026-10-07 19:27", "items": ["Longest unbroken run now follows the Count by switch; the extra switch was removed.", "Fixed ranking bars drawn at different scales (e.g. Giadrome)."]}, {"v": "4", "at": "2026-10-07 19:19", "items": ["Monsters can carry several tags at once, e.g. “Subspecies, Elder Dragon”.", "Elder Dragon subspecies corrected per the wiki (Crimson/White Fatalis, Ashen Lao-Shan Lung, Shah Dalamadur)."]}, {"v": "3", "at": "2026-10-07 19:17", "items": ["Elder Dragon category added; Abyssal Lagiacrus, Molten Tigrex and Violet Mizutsune corrected to Rare Species.", "G★ marks every G-rank expansion.", "Bestiary renamed to Monster."]}, {"v": "2", "at": "2026-10-07 18:55", "items": ["Live data from the Google Sheet via the Google Sheets connector, with status indicator, reload and built-in snapshot as fallback."]}, {"v": "1", "at": "2026-10-07 18:48", "items": ["First version as Hunter's Ledger: monster profiles, rankings, title rosters and appearance matrix for 256 large monsters across 19 titles, with filters and monster colours."]}];
+const CHANGELOG = [{"v": "24", "at": "2026-10-08 16:45", "items": ["The public page now loads the data live from the shared Google Sheet on every visit, so sheet changes show up for everyone without a new download.", "The status shows the update date taken from the “Updated:” cell in the sheet; the built-in data stays as a fallback."]}, {"v": "23", "at": "2026-10-08 16:15", "items": ["Clearer data status for visitors: the page now shows “Data as of 8 Oct 2026” instead of a connector notice, and the built-in data matches the current sheet."]}, {"v": "22", "at": "2026-10-08 14:12", "items": ["New About button with links to Fox Invictus on X and YouTube, a PayPal support link and data credits."]}, {"v": "21", "at": "2026-10-08 14:10", "items": ["Every title now has its own signature colour (e.g. Freedom Unite green, Iceborne ice blue, Ascendance blue-to-red), used on title tiles, the timeline, appearance strips, matrix headers and title stats.", "Generations are shown in neutral grey so the two colour systems no longer compete."]}, {"v": "20", "at": "2026-10-08 14:05", "items": ["Elements per monster (Fire, Water, Thunder, Ice, Dragon or none), checked against the Monster Hunter Wiki, read from a new Element column in the sheet.", "New Element group in the Tags dropdown."]}, {"v": "19", "at": "2026-10-08 13:35", "items": ["New Flagship tag for the 21 flagship monsters of the main series (per the Monster Hunter Wiki), listed under Other in the Tags dropdown."]}, {"v": "18", "at": "2026-10-08 13:30", "items": ["Higher or lower? moved to its own Game tab with larger cards.", "Popularity chart moved to its own Interactive Graphs tab, now with a switchable X axis: appearances, debut year or last appearance."]}, {"v": "17", "at": "2026-10-08 13:20", "items": ["Fixed: longest absence in the monster profile now counts an absence that is still running up to today (e.g. Ukanlos since GU).", "New “Fan” switch next to Count by: show fan votes as ★ rating or # rank everywhere; averages show as Ø rank.", "Rankings: Biggest comebacks moved to the top.", "New Hype comebacks board: years away × fan rating, so a popular return beats a longer but less-loved one.", "New Most anticipated returns board: years still missing × fan rating."]}, {"v": "16", "at": "2026-10-07 22:37", "items": ["Tag filters moved into a single “Tags” dropdown with Form, Class and Other groups, checkboxes, counts and All/None."]}, {"v": "15", "at": "2026-10-07 22:35", "items": ["Fixed: the changelog window can be closed again (✕, click outside, Esc)."]}, {"v": "14", "at": "2026-10-07 22:33", "items": ["Added this changelog."]}, {"v": "13", "at": "2026-10-07 22:30", "items": ["Titles: new “Tiles show” switch – release date, years since release, monsters, debut monsters, ★ rating of debuts or of all monsters.", "Fan Favourites: “By debut” switches between generations and single titles.", "The page now always opens on the Titles tab."]}, {"v": "12", "at": "2026-10-07 22:16", "items": ["Monster classes added as tags (Flying Wyvern, Leviathan, Elder Dragon …), checked against the Monster Hunter Wiki.", "Filter bar split into Form, Class and Other, with All and None buttons."]}, {"v": "11", "at": "2026-10-07 22:01", "items": ["Renamed from Hunter's Ledger to Wyvern Compendium.", "Fan ranks from the 20th Anniversary Hunters' Choice vote, read live from the FavRank column.", "New Fan Favourites tab: fan top list, Higher or lower? game, popularity vs. appearances chart, fans want them back, cult favourites, workhorses, best-loved families, ratings by debut generation and by tag.", "IMDb-style ★ fan rating on title tiles, in the title header and on monster tiles; fan rank in the monster profile.", "Sheet columns are now detected by content, so extra columns no longer break the import."]}, {"v": "10", "at": "2026-10-07 20:17", "items": ["Desktop 16:9 / Mobile 9:16 layout switch with a compact phone layout."]}, {"v": "9", "at": "2026-10-07 20:07", "items": ["New Titles tab: title tiles grouped by generation, monster tiles per title with debut/returning highlight, years since last appearance, appearance strip and sorting.", "The old Titles tab is now called Title stats."]}, {"v": "8", "at": "2026-10-07 19:45", "items": ["Family / Separate switch: show only main monsters or every form.", "Ancient Leshen now belongs to the Leshen family."]}, {"v": "7", "at": "2026-10-07 19:40", "items": ["Simpler filter: every tag is a plain on/off button; a monster shows if any of its tags is on."]}, {"v": "6", "at": "2026-10-07 19:35", "items": ["Filter split into form and type buttons (replaced in v7)."]}, {"v": "5", "at": "2026-10-07 19:27", "items": ["Longest unbroken run now follows the Count by switch; the extra switch was removed.", "Fixed ranking bars drawn at different scales (e.g. Giadrome)."]}, {"v": "4", "at": "2026-10-07 19:19", "items": ["Monsters can carry several tags at once, e.g. “Subspecies, Elder Dragon”.", "Elder Dragon subspecies corrected per the wiki (Crimson/White Fatalis, Ashen Lao-Shan Lung, Shah Dalamadur)."]}, {"v": "3", "at": "2026-10-07 19:17", "items": ["Elder Dragon category added; Abyssal Lagiacrus, Molten Tigrex and Violet Mizutsune corrected to Rare Species.", "G★ marks every G-rank expansion.", "Bestiary renamed to Monster."]}, {"v": "2", "at": "2026-10-07 18:55", "items": ["Live data from the Google Sheet via the Google Sheets connector, with status indicator, reload and built-in snapshot as fallback."]}, {"v": "1", "at": "2026-10-07 18:48", "items": ["First version as Hunter's Ledger: monster profiles, rankings, title rosters and appearance matrix for 256 large monsters across 19 titles, with filters and monster colours."]}];
 (function(){
   const wrap=document.getElementById("clWrap"), list=document.getElementById("clList");
   if(!wrap) return;
@@ -1043,21 +1045,25 @@ const CHANGELOG = [{"v": "22", "at": "2026-10-08 14:12", "items": ["New About bu
 })();
 // ---------- live data from Google Sheets ----------
 var SRC={state:"snapshot",at:null,msg:"",action:null};
+const DATA_AS_OF = "8 Oct 2026";
+let UPDATED = null;
+const fmtDay = s => { const d=new Date(s+"T12:00:00"); return isNaN(d)?s:d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}); };
 function renderSrc(){
   const el=document.getElementById("src"); if(!el)return;
   const time=SRC.at?new Date(SRC.at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}):"";
-  const pill={live:["live",`Live · Google Sheets${time?" · "+time:""}`],loading:["warn","Loading sheet…"],snapshot:["warn","Built-in snapshot · 7 Oct 2026"],error:["bad","Sheet not loaded"]}[SRC.state];
-  el.innerHTML=`<span class="pill ${pill[0]}"><i></i>${pill[1]}</span>${SRC.msg?`<span>${esc(SRC.msg)}</span>`:""}${SRC.action?`<button type="button" id="srcAct">${esc(SRC.action.label)}</button>`:""}<a href="${SHEET_URL}" target="_blank" rel="noopener">Open sheet</a>`;
+  const pill={live:["live",`Live · Google Sheet${UPDATED?" · updated "+fmtDay(UPDATED):""}`],loading:["warn","Loading sheet…"],snapshot:["live",`Data as of ${DATA_AS_OF}`],error:["bad","Sheet not loaded"]}[SRC.state];
+  el.innerHTML=`<span class="pill ${pill[0]}"><i></i>${pill[1]}</span>${SRC.msg?`<span>${esc(SRC.msg)}</span>`:""}${SRC.action?`<button type="button" id="srcAct">${esc(SRC.action.label)}</button>`:""}<a href="${SHEET_URL}" target="_blank" rel="noopener">Open sheet to comment</a>`;
   const b=document.getElementById("srcAct"); if(b&&SRC.action) b.onclick=SRC.action.run;
 }
-function applySheet(payload,at){
+function applySheet(payload,at,pub){
   try{
     const parsed=fromSheet(payload&&payload.values);
+    if(parsed.updated) UPDATED=parsed.updated;
     setData(parsed.games,parsed.mons);
     syncTags();
     if(!byName[S.sel]) S.sel=M[0].n;
     if(!G.find(g=>g.k===S.title)) S.title=G[G.length-1].k;
-    Object.assign(SRC,{state:"live",at:at||Date.now(),msg:`${M.length} monsters × ${G.length} titles read from the sheet.`,action:{label:"Reload",run:()=>loadOnce(true)}});
+    Object.assign(SRC,{state:"live",at:at||Date.now(),msg:"",action:pub?null:{label:"Reload",run:()=>loadOnce(true)}});
     render();
   }catch(e){
     Object.assign(SRC,{state:"error",msg:`The sheet was read, but its layout could not be used: ${e.message} Showing the last good data.`,action:{label:"Try again",run:()=>loadOnce(true)}});
@@ -1079,12 +1085,35 @@ function explain(err){
   }
 }
 let mcpRef=null;
+// ---- public route: read the link-shared sheet directly (works outside Claude, e.g. GitHub Pages) ----
+const GVIZ_URL=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=2&gid=0`;
+function parseCSV(text){const rows=[];let row=[],cell="",q=false;
+  for(let i=0;i<text.length;i++){const ch=text[i];
+    if(q){ if(ch==='"'){ if(text[i+1]==='"'){cell+='"';i++} else q=false } else cell+=ch; }
+    else if(ch==='"') q=true; else if(ch===','){row.push(cell);cell=""} else if(ch==='\n'){row.push(cell);rows.push(row);row=[];cell=""} else if(ch!=='\r') cell+=ch; }
+  if(cell!==""||row.length){row.push(cell);rows.push(row)} return rows;}
+// gviz merges the generation row and the header row into one label ("1st Generation Monster Hunter"); split them back
+function fromGviz(rows){
+  const head=rows[0]||[], gen=[], hdr=[];
+  head.forEach((h,i)=>{const s=String(h).trim(); const m=s.match(/^(\d+(?:st|nd|rd|th)\s+generation)\s+(.+)$/i);
+    if(m){gen[i]=m[1];hdr[i]=m[2]} else if(i===0){const u=s.match(/^(updated:?\s*\S+)\s+(.*)$/i); gen[i]=u?u[1]:""; hdr[i]=u?u[2]:s} else {gen[i]="";hdr[i]=s}});
+  return [gen,hdr,...rows.slice(1)];
+}
+async function loadPublic(){
+  const ctl=new AbortController(); const tm=setTimeout(()=>ctl.abort(),9000);
+  try{
+    const res=await fetch(GVIZ_URL,{signal:ctl.signal,cache:"no-store"}); clearTimeout(tm);
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const text=await res.text(); if(/^\s*</.test(text)) throw new Error("not CSV");
+    applySheet({values:fromGviz(parseCSV(text))},Date.now(),true);
+  }catch(e){ clearTimeout(tm); Object.assign(SRC,{state:"snapshot",msg:"",action:null}); renderSrc(); }
+}
 const INPUT={spreadsheetId:SHEET_ID,range:"A1:ZZ2000"};
 function onFail(err){
   const x=explain(err);
   const hadLive=SRC.state==="live";
   const action=x.approve?{label:"Allow and load",run:()=>loadOnce(true)}:x.perm?{label:"Open permissions",run:async()=>{try{const p=await claude.use("permissions");await p.manage()}catch(e){}}}:x.retry?{label:"Try again",run:()=>loadOnce(true)}:null;
-  Object.assign(SRC,{state:hadLive&&x.transient?"live":"error",msg:x.msg+(hadLive&&x.transient?" Showing the last loaded data.":" Showing the built-in snapshot."),action});
+  Object.assign(SRC,{state:hadLive&&x.transient?"live":"error",msg:x.msg+(hadLive&&x.transient?" Showing the last loaded data.":` Showing the data as of ${DATA_AS_OF}.`),action});
   if(!x.transient&&hadLive){setData(DATA.games,DATA.mons);SRC.state="error";render()}else renderSrc();
 }
 async function loadOnce(fresh){
@@ -1094,9 +1123,9 @@ async function loadOnce(fresh){
     applySheet(r.payload,r.cache&&r.cache.storedAt)}catch(e){onFail(e)}
 }
 (async()=>{
-  SRC.state="loading"; SRC.msg="Connecting to Google Sheets…"; renderSrc();
+  SRC.state="loading"; SRC.msg=""; renderSrc();
   let mcp=null; try{ mcp=window.claude&&await window.claude.use("mcp") }catch(e){}
-  if(!mcp){Object.assign(SRC,{state:"snapshot",msg:"Live data isn't available in this view.",action:null}); renderSrc(); return}
+  if(!mcp){ loadPublic(); return }
   mcpRef=mcp;
   mcp.watchTool("Google Sheets","get_values",INPUT,ev=>{
     if(ev.type==="data") applySheet(ev.result.payload, ev.result.cache&&ev.result.cache.storedAt);
